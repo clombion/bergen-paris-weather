@@ -5,7 +5,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("site/data")
+OUT = Path("docs/data")
 OUT.mkdir(parents=True, exist_ok=True)
 
 
