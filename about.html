@@ -446,17 +446,25 @@
       The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
     </p>
 
-    <h2>Pipeline scripts</h2>
-    <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo
+    <h2>Tooling summary</h2>
+    <p>
+      The technical implementation was built with <a href="https://claude.ai/claude-code">Claude Code</a>, which handled the data pipeline scripts, the website, and the iterative design process. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the Define&rarr;Find&rarr;Get&rarr;Verify&rarr;Clean&rarr;Analyse&rarr;Present framework that guided each step.
+    </p>
+    <p><strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:</p>
+    <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API
 verify_data.py                          # Sanity checks + cross-validation
 clean_data.py     &rarr; data/clean/         # Merge and standardise
 analyse.py                              # Test hypotheses
 export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
-
-    <h2>Data</h2>
-    <p>
-      Source: <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data. Snow days defined as days with 5mm+ snowfall.
-    </p>
+    <p><strong>Website</strong> &mdash; a single-page static site with no build step:</p>
+    <ul>
+      <li><a href="https://www.chartjs.org/">Chart.js</a> for interactive charts (lollipop, time series, scatter, bar)</li>
+      <li><a href="https://github.com/topojson/topojson-client">TopoJSON</a> + HTML Canvas for the background map and flight distance map</li>
+      <li><a href="https://cdn.jsdelivr.net/npm/world-atlas@2">Natural Earth / world-atlas</a> for country boundaries (50m resolution)</li>
+      <li>Vanilla JavaScript for i18n, animated transitions, and computed statistics</li>
+    </ul>
+    <p><strong>Publication</strong> &mdash; hosted on <a href="https://pages.github.com/">GitHub Pages</a>, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
+    <p><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data. Snow days defined as days with 5mm+ snowfall.</p>
 
     <div class="footer">
       <p>
