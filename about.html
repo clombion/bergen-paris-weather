@@ -343,18 +343,43 @@
 
 
     <h3>Analyse</h3>
-    <p>
-      <strong>H1 was rejected</strong> &mdash; Bergen averages 5.1&deg;C colder than Paris, not 3&deg;C. Only 25% of days are within the threshold.
-    </p>
+
+    <table>
+      <thead>
+        <tr><th></th><th>Claim</th><th>Finding</th><th>Conclusion</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>H1</strong></td>
+          <td>Daily temps within 3&deg;C</td>
+          <td>Average gap is 5.1&deg;C; only 25% of days within threshold</td>
+          <td style="color:#c44e3f">Rejected</td>
+        </tr>
+        <tr>
+          <td><strong>H2</strong></td>
+          <td>Temperatures correlate day-to-day</td>
+          <td>r=0.81 daily, r=0.94 monthly</td>
+          <td style="color:#2e6ea6">Confirmed</td>
+        </tr>
+        <tr>
+          <td><strong>H3</strong></td>
+          <td>Snow events co-occur</td>
+          <td>2.6&times; more than chance</td>
+          <td style="color:#8b7ec8">Weakly confirmed</td>
+        </tr>
+        <tr>
+          <td><strong>H4</strong></td>
+          <td>Sunny days co-occur</td>
+          <td>1.4&times; more than chance</td>
+          <td style="color:#8b7ec8">Weakly confirmed</td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="highlight-box">
-      But that 5&deg;C number turned out to be the most interesting finding. It wasn&rsquo;t as far from the hypothesised 3&deg;C as it might sound, and it hid a seasonal story: the gap shrinks to just 4&deg;C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6&deg;C in summer. This triggered an Analyse&rarr;Define loop &mdash; the original intuition of &ldquo;similar temperatures&rdquo; was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a <em>feature</em> &mdash; Bergen avoids Paris&rsquo;s heatwaves entirely.
+      The H1 rejection turned out to be the most interesting finding. The 5&deg;C gap hid a seasonal story: it shrinks to just 4&deg;C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6&deg;C in summer. This triggered an Analyse&rarr;Define loop &mdash; the original intuition of &ldquo;similar temperatures&rdquo; was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a <em>feature</em> &mdash; Bergen avoids Paris&rsquo;s heatwaves entirely.
     </div>
-    <p>
-      <strong>H2 was confirmed</strong> &mdash; r=0.81 daily correlation, r=0.94 monthly. They ride the same European weather systems.
-    </p>
-    <p>
-      <strong>H3 and H4 were weakly confirmed</strong> &mdash; snow co-occurs 2.6&times; more than chance, sunny days 1.4&times;.
-    </p>
+
     <p>
       An additional threshold sensitivity lesson: Bergen &ldquo;has snow 20% of days&rdquo; using the raw model data (any snowfall &gt;0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold (&ldquo;noticeable snow&rdquo;) gives 14% &mdash; which matched lived experience much better.
     </p>
