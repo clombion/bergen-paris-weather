@@ -5,7 +5,7 @@ template: about
 
 [← Back to the site](/)
 
-# Bergen vs Paris Weather Comparison {% #top %}
+# Bergen vs Paris Weather Comparison
 
 This project compares 10 years of daily weather data (2016–2025) between Bergen, Norway and Paris, France.
 
@@ -15,15 +15,15 @@ This project compares 10 years of daily weather data (2016–2025) between Berge
 - Bergen is geographically closer to the French Riviera than to Arctic Norway
 - When Paris bakes above 30°C (114 days over the decade), Bergen averages a comfortable 18°C
 
-## Explore the data {% #explore %}
+## Explore the data
 
 {% data-table /%}
 
-## The process {% #process %}
+## The process
 
 This project follows the [School of Data pipeline](https://civicliteraci.es/data-pipeline/) methodology: Define, Find, Get, Verify, Clean, Analyse, Present.
 
-### Define {% #define %}
+### Define
 
 Started with a personal intuition: "Bergen and Paris weather are similar." We broke this into four testable hypotheses:
 
@@ -32,19 +32,19 @@ Started with a personal intuition: "Bergen and Paris weather are similar." We br
 3. **H3**: Snow events co-occur more than chance would predict
 4. **H4**: Sunny days co-occur more than chance would predict
 
-### Find {% #find %}
+### Find
 
 {% step-meta items="Method: desk research, Sources compared: 6" /%}
 
 Surveyed six data sources (Open-Meteo, Meteostat, Frost API, Météo-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.
 
-### Get {% #get %}
+### Get
 
 {% step-meta items="Tool: Python (fetch_data.py), API: Open-Meteo" /%}
 
 Fetched 3,653 days of daily data per city from the [Open-Meteo Historical Weather API](https://open-meteo.com/) (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.
 
-### Verify {% #verify %}
+### Verify
 
 {% step-meta items="Tool: Python (verify_data.py), Cross-check: ERA5 vs ECMWF IFS models" /%}
 
@@ -52,13 +52,13 @@ Fetched 3,653 days of daily data per city from the [Open-Meteo Historical Weathe
 - **Quality**: no temperatures outside plausible climate records, no negative precipitation, no suspicious flat-line periods
 - **Cross-check**: compared ERA5 vs ECMWF IFS models. Paris data agrees within 1°C on 94% of days. Bergen shows ~1.6°C model uncertainty — noted but not disqualifying
 
-### Clean {% #clean %}
+### Clean
 
 {% step-meta items="Tool: Python (clean_data.py), Output: data/clean/horizon.csv" /%}
 
 Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max >35°C, Bergen min <−10°C) but a sensitivity check showed removing them changed results by <0.5°C, so we dropped the filtering.
 
-### Analyse {% #analyse %}
+### Analyse
 
 {% step-meta items="Tool: Python (analyse.py), Methods: descriptive statistics, Pearson correlation, co-occurrence analysis" /%}
 
@@ -77,7 +77,7 @@ The H1 rejection turned out to be the most interesting finding. The 5°C gap hid
 
 An additional threshold sensitivity lesson: Bergen "has snow 20% of days" using the raw model data (any snowfall >0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold ("noticeable snow") gives 14% — which matched lived experience much better.
 
-### Present {% #present %}
+### Present
 
 {% step-meta items="Tool: HTML / CSS / JavaScript, Charts: Chart.js, Maps: TopoJSON + Canvas, Data export: Python (export_for_web.py)" /%}
 
@@ -91,7 +91,7 @@ Many charts include a small interactive component to keep them engaging: filteri
 
 The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
 
-## Tooling summary {% #tooling %}
+## Tooling summary
 
 The technical implementation was built with Claude Code, following a guardrail-first methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact — a script, a dataset, a report — so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the [School of Data pipeline](https://civicliteraci.es/data-pipeline/), providing the framework that guided each step.
 
@@ -114,7 +114,7 @@ export_for_web.py → site/data/          # Export JSON for the website
 
 **Publication** — hosted on GitHub Pages, served directly from the repository root. Source code at [github.com/clombion/bergen-paris-weather](https://github.com/clombion/bergen-paris-weather).
 
-## Sources {% #sources %}
+## Sources
 
 **Data source** — [Open-Meteo Historical Weather API](https://open-meteo.com/) (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on [Cheung & Jim, 2019](https://link.springer.com/article/10.1007/s00484-019-01694-1).
 

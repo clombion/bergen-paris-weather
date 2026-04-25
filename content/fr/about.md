@@ -5,7 +5,7 @@ template: about
 
 [← Retour au site](/)
 
-# Comparaison météo Bergen vs Paris {% #top %}
+# Comparaison météo Bergen vs Paris
 
 Ce projet compare 10 ans de données météorologiques quotidiennes (2016–2025) entre Bergen, Norvège et Paris, France.
 
@@ -15,15 +15,15 @@ Ce projet compare 10 ans de données météorologiques quotidiennes (2016–2025
 - Bergen est géographiquement plus proche de la Côte d'Azur que de la Norvège arctique
 - Quand Paris dépasse 30°C (114 jours sur la décennie), Bergen affiche un agréable 18°C en moyenne
 
-## Explorer les données {% #explore %}
+## Explorer les données
 
 {% data-table /%}
 
-## Le processus {% #process %}
+## Le processus
 
 Ce projet suit la méthodologie du [pipeline School of Data](https://civicliteraci.es/data-pipeline/) : Define, Find, Get, Verify, Clean, Analyse, Present.
 
-### Define {% #define %}
+### Define
 
 Parti d'une intuition personnelle : « le climat de Bergen et Paris sont similaires ». Nous l'avons déclinée en quatre hypothèses testables :
 
@@ -32,19 +32,19 @@ Parti d'une intuition personnelle : « le climat de Bergen et Paris sont similai
 3. **H3** : Les épisodes neigeux coïncident plus souvent que le hasard
 4. **H4** : Les journées ensoleillées coïncident plus souvent que le hasard
 
-### Find {% #find %}
+### Find
 
 {% step-meta items="Method: desk research, Sources compared: 6" /%}
 
 Six sources de données ont été étudiées (Open-Meteo, Meteostat, Frost API, Météo-France, Visual Crossing, NOAA GSOD). Open-Meteo était la seule à proposer les six variables requises (temp moy/min/max, précipitations, neige, ensoleillement) pour les deux villes avec une complétude de 100%, sans clé API.
 
-### Get {% #get %}
+### Get
 
 {% step-meta items="Tool: Python (fetch_data.py), API: Open-Meteo" /%}
 
 Récupération de 3 653 jours de données quotidiennes par ville depuis l'[API Open-Meteo Historical Weather](https://open-meteo.com/) (réanalyse ERA5/ECMWF IFS). Zéro lacune, zéro valeur nulle.
 
-### Verify {% #verify %}
+### Verify
 
 {% step-meta items="Tool: Python (verify_data.py), Cross-check: ERA5 vs ECMWF IFS models" /%}
 
@@ -52,13 +52,13 @@ Récupération de 3 653 jours de données quotidiennes par ville depuis l'[API O
 - **Qualité** : aucune température hors des records climatiques plausibles, aucune précipitation négative, aucune période de valeurs plates suspecte
 - **Vérification croisée** : comparaison des modèles ERA5 et ECMWF IFS. Les données de Paris concordent à 1°C près sur 94% des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire
 
-### Clean {% #clean %}
+### Clean
 
 {% step-meta items="Tool: Python (clean_data.py), Output: data/clean/horizon.csv" /%}
 
 Fusion des deux villes en une table horizon unique (13 colonnes, granularité quotidienne). Standardisation des unités (ensoleillement en heures, neige en mm). Les jours extrêmes (Paris max >35°C, Bergen min <−10°C) avaient été signalés, mais un test de sensibilité a montré que leur suppression ne changeait les résultats que de <0,5°C — le filtrage a donc été abandonné.
 
-### Analyse {% #analyse %}
+### Analyse
 
 {% step-meta items="Tool: Python (analyse.py), Methods: descriptive statistics, Pearson correlation, co-occurrence analysis" /%}
 
@@ -77,7 +77,7 @@ Le rejet de H1 s'est avéré être la découverte la plus intéressante. L'écar
 
 Une leçon supplémentaire sur la sensibilité des seuils : Bergen « a de la neige 20% des jours » selon les données brutes du modèle (toute chute de neige >0mm), mais cela inclut des quantités infimes issues de la réanalyse. Avec un seuil de 5mm+ (« neige notable »), on obtient 14% — ce qui correspondait bien mieux à l'expérience vécue.
 
-### Present {% #present %}
+### Present
 
 {% step-meta items="Tool: HTML / CSS / JavaScript, Charts: Chart.js, Maps: TopoJSON + Canvas, Data export: Python (export_for_web.py)" /%}
 
@@ -91,7 +91,7 @@ De nombreux graphiques incluent une petite composante interactive pour maintenir
 
 Le site est bilingue (EN/FR), avec détection automatique des utilisateurs français, car le public français est le premier concerné par cette idée reçue.
 
-## Résumé des outils {% #tooling %}
+## Résumé des outils
 
 L'implémentation technique a été réalisée avec Claude Code, selon une méthodologie axée sur les garde-fous : chaque tâche déléguée au LLM était limitée à une seule phase du pipeline, et sa sortie était vérifiée avant de passer à l'étape suivante. Chaque phase a produit un artefact vérifiable — un script, un jeu de données, un rapport — de sorte que l'ensemble du pipeline peut être reproduit sans aucun LLM, simplement en exécutant les scripts Python dans l'ordre. La structure méthodologique a suivi le [pipeline School of Data](https://civicliteraci.es/data-pipeline/), fournissant le cadre qui a guidé chaque étape.
 
@@ -114,7 +114,7 @@ export_for_web.py → site/data/          # Export JSON pour le site web
 
 **Publication** — hébergé sur GitHub Pages, servi directement depuis la racine du dépôt. Code source sur [github.com/clombion/bergen-paris-weather](https://github.com/clombion/bergen-paris-weather).
 
-## Sources {% #sources %}
+## Sources
 
 **Source des données** — [Open-Meteo Historical Weather API](https://open-meteo.com/) (réanalyse ERA5 / ECMWF IFS), 3 653 jours de données quotidiennes par ville. Jours de neige définis comme jours avec 5mm+ de chutes de neige. Zone de confort thermique basée sur [Cheung & Jim, 2019](https://link.springer.com/article/10.1007/s00484-019-01694-1).
 

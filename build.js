@@ -2,7 +2,7 @@ const Markdoc = require('@markdoc/markdoc');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
-const tags = require('./markdoc/tags');
+const { tags, nodes } = require('./markdoc/tags');
 const i18nData = require('./i18n/dynamic');
 
 // Parse CLI args
@@ -263,11 +263,21 @@ for (const page of pages) {
     }
   }
 
-  // Transform
+  // Validate and transform
   const config = {
     tags,
+    nodes,
     variables: { lang: page.lang },
   };
+
+  const errors = Markdoc.validate(ast, config);
+  if (errors.length) {
+    console.error(`  errors in ${page.content}:`);
+    errors.forEach(e => console.error(`    line ${e.lines?.[0] || '?'}: ${e.error?.message || e.message || JSON.stringify(e)}`));
+    skipped++;
+    continue;
+  }
+
   const transformed = Markdoc.transform(ast, config);
   const contentHtml = Markdoc.renderers.html(transformed);
 
@@ -341,3 +351,6 @@ if (fs.existsSync(stylesSrc)) {
 }
 
 console.log(`\nDone: ${built} pages built, ${skipped} skipped.`);
+if (skipped > 0) {
+  process.exit(1);
+}

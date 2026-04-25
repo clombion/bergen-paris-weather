@@ -314,20 +314,45 @@ const stepMeta = {
   },
 };
 
+const heading = {
+  children: ['inline'],
+  attributes: {
+    id: { type: String },
+    level: { type: Number, required: true, default: 1 },
+  },
+  transform(node, config) {
+    const children = node.transformChildren(config);
+    // Extract text content for auto-ID
+    function getText(c) {
+      if (typeof c === 'string') return c;
+      if (c && c.children) return c.children.map(getText).join('');
+      return '';
+    }
+    const text = children.map(getText).join('');
+    const id = node.attributes.id || text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    return new Tag(`h${node.attributes.level}`, { id }, children);
+  },
+};
+
 module.exports = {
-  chart,
-  stats,
-  callout,
-  heatmap,
-  'year-slider': yearSlider,
-  'flight-map': flightMap,
-  'capital-select': capitalSelect,
-  'data-table': dataTable,
-  byline,
-  legend,
-  section,
-  methodology,
-  'distance-summary': distanceSummary,
-  header: headerTag,
-  'step-meta': stepMeta,
+  tags: {
+    chart,
+    stats,
+    callout,
+    heatmap,
+    'year-slider': yearSlider,
+    'flight-map': flightMap,
+    'capital-select': capitalSelect,
+    'data-table': dataTable,
+    byline,
+    legend,
+    section,
+    methodology,
+    'distance-summary': distanceSummary,
+    header: headerTag,
+    'step-meta': stepMeta,
+  },
+  nodes: {
+    heading,
+  },
 };
