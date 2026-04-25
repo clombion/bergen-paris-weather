@@ -341,19 +341,6 @@
       Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max &gt;35&deg;C, Bergen min &lt;&minus;10&deg;C) but a sensitivity check showed removing them changed results by &lt;0.5&deg;C, so we dropped the filtering.
     </p>
 
-    <table>
-      <thead>
-        <tr><th>date</th><th>bergen_temp_mean</th><th>paris_temp_mean</th><th>bergen_snowfall_mm</th><th>bergen_sunshine_hours</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>2016-01-01</td><td>3.6</td><td>6.5</td><td>18.2</td><td>3.64</td></tr>
-        <tr><td>2016-01-02</td><td>0.7</td><td>9.0</td><td>0.0</td><td>1.51</td></tr>
-        <tr><td>2016-01-03</td><td>&minus;2.7</td><td>6.9</td><td>0.0</td><td>5.18</td></tr>
-      </tbody>
-    </table>
-    <p style="font-family:-apple-system,system-ui,sans-serif;font-size:0.82rem;color:var(--muted)">
-      Full table: 3,653 rows &times; 13 columns &mdash; <a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv" style="color:var(--muted)">horizon.csv</a>
-    </p>
 
     <h3>Analyse</h3>
     <p>
