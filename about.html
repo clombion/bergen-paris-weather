@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="scroll-behavior:smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,6 +57,8 @@
       font-weight: 400;
       margin-top: 40px;
       margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
     }
 
     h3 {
@@ -65,6 +67,8 @@
       margin-top: 28px;
       margin-bottom: 6px;
       font-family: -apple-system, system-ui, sans-serif;
+      padding-left: 12px;
+      border-left: 3px solid #2e6ea6;
     }
 
     p { margin-bottom: 16px; }
@@ -78,7 +82,25 @@
 
     strong { font-weight: 600; }
 
-    a { color: var(--text); }
+    a {
+      color: var(--text);
+      text-decoration: none;
+      background-image: linear-gradient(120deg, rgba(46, 110, 166, 0.28) 0%, rgba(46, 110, 166, 0.38) 100%);
+      background-repeat: no-repeat;
+      background-size: 100% 40%;
+      background-position: 0 95%;
+      transition: background-size 0.2s ease;
+    }
+
+    a:hover {
+      background-image: linear-gradient(120deg, rgba(46, 110, 166, 0.25) 0%, rgba(46, 110, 166, 0.4) 15%, rgba(46, 110, 166, 0.32) 40%, rgba(46, 110, 166, 0.42) 70%, rgba(46, 110, 166, 0.26) 100%);
+      background-size: 100% 92%;
+      background-position: 0 90%;
+    }
+
+    .back, .footer a, .step-meta a, .toc a {
+      background-image: none;
+    }
 
     .findings {
       list-style: none;
@@ -114,6 +136,19 @@
       padding: 6px 10px;
       text-align: left;
       border-bottom: 1px solid var(--border);
+    }
+
+    #dataTable th:first-child,
+    #dataTable td:first-child {
+      position: sticky;
+      left: 0;
+      background: var(--card);
+      z-index: 1;
+      border-right: 1px solid var(--border);
+    }
+
+    #dataTable thead th:first-child {
+      z-index: 2;
     }
 
     th {
@@ -165,6 +200,9 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      background: var(--highlight);
+      padding: 2px 8px;
+      border-radius: 4px;
     }
 
     .footer {
@@ -176,6 +214,59 @@
       margin-top: 48px;
     }
 
+    .page-layout {
+      display: flex;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .toc {
+      position: sticky;
+      top: 32px;
+      align-self: flex-start;
+      width: 180px;
+      flex-shrink: 0;
+      padding: 0 16px 0 0;
+      margin-top: 60px;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .toc a {
+      display: block;
+      padding: 4px 0 4px 12px;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .toc a:hover {
+      color: var(--text);
+    }
+
+    .toc a.active {
+      color: #2e6ea6;
+      border-left-color: #2e6ea6;
+      font-weight: 600;
+    }
+
+    .toc a.sub {
+      padding-left: 22px;
+      font-size: 0.73rem;
+    }
+
+    .toc a.sub.active {
+      border-left-color: var(--muted);
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .toc { display: none; }
+      .page-layout { display: block; }
+    }
+
     @media (max-width: 600px) {
       h1 { font-size: 1.6rem; }
       .container { padding: 40px 20px 60px; }
@@ -183,10 +274,27 @@
   </style>
 </head>
 <body>
+  <div class="page-layout">
+
+  <nav class="toc" id="toc">
+    <a href="#top" class="active">Introduction</a>
+    <a href="#explore" class="active">Explore the data</a>
+    <a href="#process">The process</a>
+    <a href="#define" class="sub">Define</a>
+    <a href="#find" class="sub">Find</a>
+    <a href="#get" class="sub">Get</a>
+    <a href="#verify" class="sub">Verify</a>
+    <a href="#clean" class="sub">Clean</a>
+    <a href="#analyse" class="sub">Analyse</a>
+    <a href="#present" class="sub">Present</a>
+    <a href="#tooling">Tooling</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
   <div class="container">
     <a href="index.html" class="back">&larr; Back to the site</a>
 
-    <h1>Bergen vs Paris Weather Comparison</h1>
+    <h1 id="top">Bergen vs Paris Weather Comparison</h1>
     <p class="intro">
       This project compares 10 years of daily weather data (2016&ndash;2025) between Bergen, Norway and Paris, France.
     </p>
@@ -199,7 +307,7 @@
       <li>When Paris bakes above 30&deg;C (114 days over the decade), Bergen averages a comfortable 18&deg;C</li>
     </ul>
 
-    <h2>Explore the data</h2>
+    <h2 id="explore">Explore the data</h2>
     <div style="margin:16px 0">
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem">
         <input type="text" id="dataSearch" placeholder="Filter by date, e.g. 2022-01" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:inherit;width:200px">
@@ -319,12 +427,12 @@
     loadTable();
     </script>
 
-    <h2>The process</h2>
+    <h2 id="process">The process</h2>
     <p>
       This project follows the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a> methodology: Define, Find, Get, Verify, Clean, Analyse, Present.
     </p>
 
-    <h3>Define</h3>
+    <h3 id="define">Define</h3>
     <p>
       Started with a personal intuition: &ldquo;Bergen and Paris weather are similar.&rdquo; We broke this into four testable hypotheses:
     </p>
@@ -335,7 +443,7 @@
       <li><strong>H4</strong>: Sunny days co-occur more than chance would predict</li>
     </ol>
 
-    <h3>Find</h3>
+    <h3 id="find">Find</h3>
     <div class="step-meta">
       <span>Method: desk research</span>
       <span>Sources compared: 6</span>
@@ -344,7 +452,7 @@
       Surveyed six data sources (Open-Meteo, Meteostat, Frost API, M&eacute;t&eacute;o-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.
     </p>
 
-    <h3>Get</h3>
+    <h3 id="get">Get</h3>
     <div class="step-meta">
       <span>Tool: Python (<code>fetch_data.py</code>)</span>
       <span>API: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a></span>
@@ -353,7 +461,7 @@
       Fetched 3,653 days of daily data per city from the <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.
     </p>
 
-    <h3>Verify</h3>
+    <h3 id="verify">Verify</h3>
     <div class="step-meta">
       <span>Tool: Python (<code>verify_data.py</code>)</span>
       <span>Cross-check: ERA5 vs ECMWF IFS models</span>
@@ -364,7 +472,7 @@
       <li><strong>Cross-check</strong>: compared ERA5 vs ECMWF IFS models. Paris data agrees within 1&deg;C on 94% of days. Bergen shows ~1.6&deg;C model uncertainty &mdash; noted but not disqualifying</li>
     </ul>
 
-    <h3>Clean</h3>
+    <h3 id="clean">Clean</h3>
     <div class="step-meta">
       <span>Tool: Python (<code>clean_data.py</code>)</span>
       <span>Output: <code>data/clean/horizon.csv</code></span>
@@ -374,7 +482,7 @@
     </p>
 
 
-    <h3>Analyse</h3>
+    <h3 id="analyse">Analyse</h3>
     <div class="step-meta">
       <span>Tool: Python (<code>analyse.py</code>)</span>
       <span>Methods: descriptive statistics, Pearson correlation, co-occurrence analysis</span>
@@ -423,7 +531,7 @@
       An additional threshold sensitivity lesson: Bergen &ldquo;has snow 20% of days&rdquo; using the raw model data (any snowfall &gt;0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold (&ldquo;noticeable snow&rdquo;) gives 14% &mdash; which matched lived experience much better.
     </p>
 
-    <h3>Present</h3>
+    <h3 id="present">Present</h3>
     <div class="step-meta">
       <span>Tool: HTML / CSS / JavaScript</span>
       <span>Charts: <a href="https://www.chartjs.org/" style="color:var(--muted)">Chart.js</a></span>
@@ -446,9 +554,9 @@
       The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
     </p>
 
-    <h2>Tooling summary</h2>
+    <h2 id="tooling">Tooling summary</h2>
     <p>
-      The technical implementation was built with <a href="https://claude.ai/claude-code">Claude Code</a>, following a harness-driven methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the framework that guided each step.
+      The technical implementation was built with Claude Code, following a guardrail-first methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the framework that guided each step.
     </p>
     <p><strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:</p>
     <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API
@@ -463,8 +571,8 @@ export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
       <li><a href="https://cdn.jsdelivr.net/npm/world-atlas@2">Natural Earth / world-atlas</a> for country boundaries (50m resolution)</li>
       <li>Vanilla JavaScript for i18n, animated transitions, and computed statistics</li>
     </ul>
-    <p><strong>Publication</strong> &mdash; hosted on <a href="https://pages.github.com/">GitHub Pages</a>, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
-    <h2>Sources</h2>
+    <p><strong>Publication</strong> &mdash; hosted on GitHub Pages, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
+    <h2 id="sources">Sources</h2>
     <p><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.</p>
     <p><strong>Project data</strong> &mdash; the raw API responses and cleaned horizon table are stored in the repository for reproducibility:</p>
     <ul>
@@ -473,6 +581,10 @@ export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
       <li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/site/data">site/data/</a> &mdash; pre-computed JSON subsets powering the website charts</li>
     </ul>
 
+    <div style="text-align:center;margin:48px 0 16px">
+      <a href="#top" style="font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem;color:var(--muted);text-decoration:none">&uarr; Back to top</a>
+    </div>
+
     <div class="footer">
       <p>
         A project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted)">C&eacute;dric Lombion</a>.
@@ -480,6 +592,46 @@ export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
         <a href="https://github.com/clombion/bergen-paris-weather" style="color:var(--muted)">GitHub</a>.
       </p>
     </div>
-  </div>
+  </div><!-- .container -->
+  </div><!-- .page-layout -->
+
+  <script>
+    // TOC scroll tracking
+    const tocLinks = document.querySelectorAll('#toc a');
+    const sections = [];
+    tocLinks.forEach(link => {
+      const id = link.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) sections.push({ id, el, link });
+    });
+
+    function updateToc() {
+      let current = sections[0];
+      // If scrolled to bottom, highlight the last section
+      const atBottom = (window.innerHeight + window.scrollY) >= document.body.scrollHeight - 20;
+      if (atBottom) {
+        current = sections[sections.length - 1];
+      } else {
+        for (const s of sections) {
+          if (s.el.getBoundingClientRect().top <= 80) current = s;
+        }
+      }
+      tocLinks.forEach(l => l.classList.remove('active'));
+      if (current) current.link.classList.add('active');
+    }
+
+    window.addEventListener('scroll', updateToc, { passive: true });
+    updateToc();
+
+    // Smooth scroll for TOC links
+    tocLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const id = link.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
 </body>
 </html>
