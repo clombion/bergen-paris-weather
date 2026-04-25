@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bergen vs Paris — The Winter Surprise</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --bergen: #2e6ea6;
+      --paris: #c44e3f;
+      --gap: #8b7ec8;
+      --card: #ffffff;
+      --border: #e5e5e0;
+      --highlight: #f0ede4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    .map-bg {
+      position: absolute;
+      top: 0;
+      right: 0%;
+      pointer-events: none;
+      z-index: -1;
+      will-change: transform;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      padding: 80px 0 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    header .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    .legend-inline {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 24px 0 8px;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .legend-inline span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    section {
+      margin: 56px 0;
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    section .lead {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+
+    .chart-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 16px 0;
+    }
+
+    .chart-wrap canvas {
+      width: 100% !important;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .stat-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-card .number {
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card .label {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .highlight-box {
+      background: var(--highlight);
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin: 24px 0;
+      font-size: 1.05rem;
+    }
+
+    .surprise-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .surprise-tag {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.82rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .surprise-tag.warmer {
+      background: #e8f0f8;
+      border-color: var(--bergen);
+      color: var(--bergen);
+      font-weight: 600;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: auto repeat(12, 1fr);
+      gap: 2px;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.75rem;
+      margin: 16px 0;
+    }
+
+    .heatmap-grid .cell {
+      padding: 6px 4px;
+      text-align: center;
+      border-radius: 3px;
+    }
+
+    .heatmap-grid .header {
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .segmented {
+      display: inline-flex;
+      position: relative;
+      background: var(--border);
+      border-radius: 24px;
+      padding: 3px;
+      margin: 16px 0;
+    }
+
+    .segmented .seg-btn {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.8rem;
+      padding: 6px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      border-radius: 20px;
+      transition: color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .segmented .seg-btn.active {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .segmented .seg-slider {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      height: calc(100% - 6px);
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+    }
+
+    .heatmap-grid .cell {
+      transition: opacity 0.3s ease;
+    }
+
+    .heatmap-grid .cell.dimmed {
+      opacity: 0.12;
+    }
+
+    .capital-select {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: inherit;
+      padding: 4px 28px 4px 12px;
+      border: none;
+      border-bottom: 2px solid #d4956a;
+      border-radius: 0;
+      background: transparent;
+      color: #d4956a;
+      font-weight: 600;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4956a' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+    }
+
+    .capital-select:focus {
+      outline: none;
+      border-bottom-color: #b87a50;
+    }
+
+    .capital-select option {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    #flightMap {
+      transition: opacity 0.3s ease;
+    }
+
+    #distanceSummary {
+      transition: opacity 0.3s ease;
+    }
+
+    .methodology {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 64px;
+      margin-bottom: 48px;
+    }
+
+    .methodology h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .methodology p { margin-bottom: 8px; }
+
+    #snowCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 10;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.82rem;
+      display: flex;
+      background: var(--border);
+      border-radius: 16px;
+      padding: 2px;
+      cursor: pointer;
+    }
+
+    .lang-toggle span {
+      padding: 4px 12px;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .lang-toggle span.active {
+      background: var(--card);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      header .subtitle {
+        font-size: 1rem;
+      }
+
+      section h2 {
+        font-size: 1.25rem;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+      }
+
+      .stat-card .number {
+        font-size: 1.5rem;
+      }
+
+      .stat-card .label {
+        font-size: 0.7rem;
+      }
+
+      .heatmap-grid {
+        font-size: 0.6rem;
+        gap: 1px;
+        overflow-x: auto;
+        min-width: 500px;
+      }
+
+      .heatmap-grid .cell {
+        padding: 4px 2px;
+      }
+
+      .chart-wrap {
+        padding: 12px;
+        overflow-x: auto;
+      }
+
+      .segmented {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .segmented .seg-btn {
+        font-size: 0.72rem;
+        padding: 5px 10px;
+      }
+
+      .map-bg {
+        right: -10%;
+        opacity: 0.4 !important;
+      }
+
+      .capital-select {
+        font-size: 0.95em;
+      }
+
+      .highlight-box {
+        padding: 16px 20px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle" id="langToggle">
+    <span class="active" data-lang="en">EN</span>
+    <span data-lang="fr">FR</span>
+  </div>
+
+  <canvas id="mapBg" class="map-bg"></canvas>
+  <canvas id="snowCanvas"></canvas>
+
+  <div class="container">
+
+    <header>
+      <h1 data-i18n="title">Bergen is not the frozen north<br>you think it is</h1>
+      <p class="subtitle" data-i18n="subtitle">
+        In winter, Norway's rainiest city is barely colder than Paris.
+        A decade of weather data tells a surprising story.
+      </p>
+      <p style="margin-top:20px;font-family:-apple-system,system-ui,sans-serif;font-size:0.75rem;color:#b0ada4;letter-spacing:0.03em" data-i18n="byline">
+        A little side project by <a href="https://linkedin.com/in/cedriclombion" style="color:#b0ada4;text-decoration:none;border-bottom:1px solid #d0cec6" target="_blank" rel="noopener">Cédric Lombion</a>
+      </p>
+    </header>
+
+    <div class="legend-inline">
+      <span><span class="legend-dot" style="background:var(--bergen)"></span> Bergen</span>
+      <span><span class="legend-dot" style="background:var(--paris)"></span> Paris</span>
+    </div>
+
+    <!-- Monthly temperature comparison -->
+    <section>
+      <h2 data-i18n="gap_title">The gap narrows in winter</h2>
+      <p class="lead" data-i18n="gap_lead">
+        Average monthly temperatures over 2016–2025. In summer, Paris pulls
+        ahead by 6°C. But from November to February, the difference shrinks
+        to around 4°C.
+      </p>
+      <div class="chart-wrap">
+        <canvas id="monthlyChart" height="300"></canvas>
+      </div>
+    </section>
+
+
+    <!-- Key stats -->
+    <section>
+      <div class="stat-grid" id="keyStats"></div>
+    </section>
+
+    <!-- Year × Month heatmap -->
+    <section>
+      <h2 data-i18n="heatmap_title">A decade, month by month</h2>
+      <p class="lead" data-i18n="heatmap_lead">
+        Each cell shows how much colder Bergen was than Paris.
+        The lighter the cell, the closer they were. Blue means Bergen was warmer.
+      </p>
+      <div class="segmented" id="heatmapFilter">
+        <div class="seg-slider"></div>
+        <button class="seg-btn active" data-filter="all" data-i18n="filter_all">All</button>
+        <button class="seg-btn" data-filter="close" data-i18n="filter_close">Similar</button>
+        <button class="seg-btn" data-filter="typical" data-i18n="filter_typical">Average</button>
+        <button class="seg-btn" data-filter="far" data-i18n="filter_far">Different</button>
+      </div>
+      <div class="chart-wrap" style="overflow-x:auto">
+        <div id="heatmap" class="heatmap-grid" style="min-width:500px"></div>
+      </div>
+    </section>
+
+    <!-- Daily co-movement -->
+    <section>
+      <h2 data-i18n="comovement_title">They move together</h2>
+      <p class="lead" data-i18n="comovement_lead">
+        When a cold front sweeps across Europe, both cities feel it.
+        Day to day, their temperatures move in sync 81% of the time.
+        Month to month, the match tightens to 94%.
+      </p>
+      <div class="stat-grid stat-grid-2" style="margin-bottom: 16px" id="corrStats"></div>
+      <div class="chart-wrap" style="position:relative;height:320px">
+        <canvas id="dailyChart"></canvas>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:12px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--muted)">
+        <span>2016</span>
+        <input type="range" id="yearSlider" min="2016" max="2025" value="2025" step="1"
+          style="flex:1;accent-color:#b0ada4;cursor:pointer">
+        <span>2025</span>
+        <span id="yearLabel" style="font-weight:600;color:var(--text);min-width:3em;text-align:center">2025</span>
+      </div>
+    </section>
+
+    <!-- Snow -->
+    <section id="snowSection">
+      <h2 data-i18n="snow_title">Bergen's snow days are warmer than you think</h2>
+      <p class="lead" data-i18n="snow_lead">
+        Bergen gets noticeable snow on about 14% of days, mostly from
+        November to March. But this isn't Arctic cold. The average temperature
+        on a Bergen snow day is 1.5°C — almost eight in ten snow days are
+        above freezing. On those same days, Tromsø — Norway's largest city
+        above the Arctic Circle, the one with polar nights and northern
+        lights — averages -5.1°C.
+      </p>
+      <div class="stat-grid" id="snowStats"></div>
+      <div class="stat-grid stat-grid-2" id="snowGapStats"></div>
+      <p class="lead" data-i18n="snow_closing">
+        Even on its snowiest days, Bergen is closer to Paris than to Tromsø.
+        Bergen's snow is wet Atlantic snow — falling at temperatures where
+        Paris would have cold rain. When Paris shivers at 3°C in a winter
+        drizzle, Bergen is at 1°C in a snowfall. Not so different after all.
+      </p>
+    </section>
+
+    <!-- Why: Geography -->
+    <section>
+      <h2 data-i18n="geo_title">The Norway you're thinking of is very far from Bergen</h2>
+      <p class="lead" data-i18n="geo_lead">
+        When people hear "Norway," they picture the Arctic — polar bears,
+        northern lights, endless ice. But that's Tromsø and the far north,
+        Norway's Arctic capital, 1,200&nbsp;km from Bergen.
+        Bergen sits on the southwest coast, warmed by the Gulf Stream,
+        closer to the Mediterranean than to the Arctic.
+      </p>
+      <div class="chart-wrap">
+        <canvas id="flightMap" height="480"></canvas>
+      </div>
+      <h3 style="font-weight:400;font-size:1.3rem;margin-top:32px">
+        <span data-i18n="from_bergen">From Bergen to</span>
+        <select id="capitalSelect" class="capital-select"></select>
+      </h3>
+      <p id="distanceSummary" class="lead" style="margin-top:8px"></p>
+      <div class="chart-wrap" style="position:relative;height:180px">
+        <canvas id="flightChart"></canvas>
+      </div>
+      <div class="highlight-box" data-i18n="gulf_stream">
+        The Gulf Stream carries warm Atlantic water along Norway's west coast,
+        keeping Bergen's winters far milder than its latitude would suggest.
+        At 60°N, Bergen should be as cold as Anchorage, Alaska — instead,
+        its January average is around 1°C, almost Parisian.
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <div class="methodology">
+      <h3 data-i18n="method_title">Methodology</h3>
+      <p data-i18n="method_p1">
+        Daily weather data from <strong>Open-Meteo Historical Weather API</strong>
+        (ERA5 / ECMWF IFS reanalysis), covering 1 Jan 2016 – 31 Dec 2025 (3,653 days).
+        Bergen coordinates: 60.39°N, 5.32°E. Paris: 48.86°N, 2.35°E.
+      </p>
+      <p data-i18n="method_p2">
+        Cross-checked against ECMWF IFS model; Paris data agrees within 1°C on 94% of days.
+        Bergen shows ~1.6°C model uncertainty — noted but not disqualifying.
+        Snow days defined as days with 5mm+ snowfall.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    // --- i18n ---
+    const I18N = {
+      en: {
+        title: 'Bergen is not the frozen north<br>you think it is',
+        subtitle: 'In winter, Norway\'s rainiest city is barely colder than Paris. A decade of weather data tells a surprising story.',
+        byline: 'A little side project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted);text-decoration:underline" target="_blank" rel="noopener">Cédric Lombion</a>',
+        gap_title: 'The gap narrows in winter',
+        gap_lead: 'Average monthly temperatures over 2016–2025. In summer, Paris pulls ahead by 6°C. But from November to February, the difference shrinks to around 4°C.',
+        stat_winter: 'Winter gap (Dec–Feb)',
+        stat_summer: 'Summer gap (Jun–Aug)',
+        stat_avg: 'Average gap year-round',
+        heatmap_title: 'A decade, month by month',
+        heatmap_lead: 'Each cell shows how much colder Bergen was than Paris. The lighter the cell, the closer they were. Blue means Bergen was warmer.',
+        filter_all: 'All',
+        filter_close: 'Similar',
+        filter_typical: 'Average',
+        filter_far: 'Different',
+        comovement_title: 'They move together',
+        comovement_lead: 'When a cold front sweeps across Europe, both cities feel it. Day to day, their temperatures move in sync 81% of the time. Month to month, the match tightens to 94%.',
+        stat_daily_sync: 'Daily temps move together',
+        stat_monthly_sync: 'Monthly temps move together',
+        snow_title: 'Bergen\'s snow days are warmer than you think',
+        snow_lead: 'Bergen gets noticeable snow on 14% of days — 511 days over the decade. But this isn\'t Arctic cold. The average temperature on a Bergen snow day is 1.5°C — almost eight in ten snow days are above freezing. On those same days, Tromsø — Norway\'s largest city above the Arctic Circle, the one with polar nights and northern lights — averages -5.1°C.',
+        stat_snow_avg: 'Average temp on snow days',
+        stat_snow_above0: 'Snow days above 0°C',
+        stat_snow_below5: 'Snow days below -5°C',
+        stat_snow_paris: 'Gap with Paris on snow days',
+        stat_snow_tromso: 'Gap with Tromsø on snow days',
+        snow_closing: 'Even on its snowiest days, Bergen is closer to Paris than to Tromsø. Bergen\'s snow is wet Atlantic snow — falling at temperatures where Paris would have cold rain. When Paris shivers at 3°C in a winter drizzle, Bergen is at 1°C in a snowfall. Not so different after all.',
+        geo_title: 'The Norway you\'re thinking of is very far from Bergen',
+        geo_lead: 'When people hear "Norway," they picture the Arctic — polar bears, northern lights, endless ice. But that\'s Tromsø and the far north, Norway\'s Arctic capital, 1,200\u00a0km from Bergen. Bergen sits on the southwest coast, warmed by the Gulf Stream, closer to the Mediterranean than to the Arctic.',
+        from_bergen: 'From Bergen to',
+        gulf_stream: 'The Gulf Stream carries warm Atlantic water along Norway\'s west coast, keeping Bergen\'s winters far milder than its latitude would suggest. At 60°N, Bergen should be as cold as Anchorage, Alaska — instead, its January average is around 1°C, almost Parisian.',
+        method_title: 'Methodology',
+        method_p1: 'Daily weather data from <strong>Open-Meteo Historical Weather API</strong> (ERA5 / ECMWF IFS reanalysis), covering 1 Jan 2016 – 31 Dec 2025 (3,653 days). Bergen coordinates: 60.39°N, 5.32°E. Paris: 48.86°N, 2.35°E.',
+        method_p2: 'Cross-checked against ECMWF IFS model; Paris data agrees within 1°C on 94% of days. Bergen shows ~1.6°C model uncertainty — noted but not disqualifying. Snow days defined as days with 5mm+ snowfall.',
+        km_from_bergen: 'km from Bergen',
+        dist_same: (name, km, tKm) => `${name} est à ${km.toLocaleString()} km de Bergen — presque exactement la même distance que Tromsø (${tKm.toLocaleString()} km). Il faut voyager aussi loin pour atteindre l'Arctique que pour rejoindre ${name}.`,
+        dist_closer: (name, km, tKm) => `${name} is only ${km.toLocaleString()} km from Bergen — closer than Tromsø (${tKm.toLocaleString()} km). Bergen is nearer to ${name} than to its own country's Arctic north.`,
+        dist_somewhat: (name, km, tKm) => `${name} is ${km.toLocaleString()} km from Bergen. Not that much further than Tromsø (${tKm.toLocaleString()} km) — the Arctic tip of Norway that people picture when they think "Norwegian weather."`,
+        dist_far: (name, km, tKm, ratio) => `${name} is ${km.toLocaleString()} km from Bergen. Even that far-flung destination is only ${ratio}× the distance to Tromsø — Norway is a very long country.`,
+      },
+      fr: {
+        title: 'Bergen n\'est pas le grand nord<br>que vous imaginez',
+        subtitle: 'En hiver, la ville la plus pluvieuse de Norvège est à peine plus froide que Paris. Une décennie de données météo raconte une histoire surprenante.',
+        byline: 'Un petit projet perso de <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted);text-decoration:underline" target="_blank" rel="noopener">Cédric Lombion</a>',
+        gap_title: 'L\'écart se réduit en hiver',
+        gap_lead: 'Températures moyennes mensuelles sur 2016–2025. En été, Paris prend 6°C d\'avance. Mais de novembre à février, la différence se réduit à environ 4°C.',
+        stat_winter: 'Écart hivernal (déc–fév)',
+        stat_summer: 'Écart estival (juin–août)',
+        stat_avg: 'Écart moyen annuel',
+        heatmap_title: 'Une décennie, mois par mois',
+        heatmap_lead: 'Chaque cellule indique de combien Bergen était plus froide que Paris. Plus la cellule est claire, plus les températures étaient proches. Une cellule bleue signifie que Bergen était plus chaude.',
+        filter_all: 'Tout',
+        filter_close: 'Proches',
+        filter_typical: 'Moyens',
+        filter_far: 'Éloignés',
+        comovement_title: 'Elles bougent ensemble',
+        comovement_lead: 'Quand une vague de froid balaie l\'Europe, les deux villes le ressentent. Au jour le jour, leurs températures évoluent en phase 81% du temps. Mois par mois, la concordance atteint 94%.',
+        stat_daily_sync: 'Corrélation quotidienne des températures',
+        stat_monthly_sync: 'Corrélation mensuelle des températures',
+        snow_title: 'Les jours de neige à Bergen sont plus doux qu\'on ne le pense',
+        snow_lead: 'Bergen connaît des chutes de neige notables 14% des jours — 511 jours sur la décennie. Mais ce n\'est pas le froid arctique. La température moyenne d\'un jour de neige à Bergen est de 1,5°C — près de huit jours de neige sur dix sont au-dessus de zéro. Ces mêmes jours, Tromsø — la plus grande ville norvégienne au-dessus du cercle polaire, celle des nuits polaires et des aurores boréales — affiche -5,1°C en moyenne.',
+        stat_snow_avg: 'Temp. moyenne les jours de neige',
+        stat_snow_above0: 'Jours de neige au-dessus de 0°C',
+        stat_snow_below5: 'Jours de neige en dessous de -5°C',
+        stat_snow_paris: 'Écart avec Paris les jours de neige',
+        stat_snow_tromso: 'Écart avec Tromsø les jours de neige',
+        snow_closing: 'Même lors de ses jours les plus enneigés, Bergen est plus proche de Paris que de Tromsø. La neige de Bergen est une neige atlantique humide — elle tombe à des températures où Paris reçoit de la pluie froide. Quand Paris frissonne à 3°C sous la bruine, Bergen est à 1°C sous la neige. Pas si différent, au fond.',
+        geo_title: 'La Norvège à laquelle vous pensez est très loin de Bergen',
+        geo_lead: 'Quand on entend « Norvège », on imagine l\'Arctique — ours polaires, aurores boréales, glace à perte de vue. Mais c\'est Tromsø et le Grand Nord, la capitale arctique de la Norvège, à 1\u00a0200\u00a0km de Bergen. Bergen se trouve sur la côte sud-ouest, réchauffée par le Gulf Stream, plus proche de la Méditerranée que de l\'Arctique.',
+        from_bergen: 'De Bergen à',
+        gulf_stream: 'Le Gulf Stream transporte des eaux atlantiques chaudes le long de la côte ouest de la Norvège, rendant les hivers de Bergen bien plus doux que sa latitude ne le suggère. À 60°N, Bergen devrait être aussi froide qu\'Anchorage en Alaska — au lieu de cela, sa moyenne de janvier est d\'environ 1°C, presque parisienne.',
+        method_title: 'Méthodologie',
+        method_p1: 'Données météorologiques quotidiennes provenant de l\'<strong>API Open-Meteo Historical Weather</strong> (réanalyse ERA5 / ECMWF IFS), couvrant du 1er janvier 2016 au 31 décembre 2025 (3\u00a0653 jours). Coordonnées Bergen : 60,39°N, 5,32°E. Paris : 48,86°N, 2,35°E.',
+        method_p2: 'Vérifié par croisement avec le modèle ECMWF IFS ; les données de Paris concordent à 1°C près sur 94% des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire. Jours de neige définis comme jours avec 5mm+ de chutes de neige.',
+        km_from_bergen: 'km depuis Bergen',
+        dist_same: (name, km, tKm) => `${name} est à ${km.toLocaleString('fr')} km de Bergen — presque exactement la même distance que Tromsø (${tKm.toLocaleString('fr')} km). Il faut voyager aussi loin pour atteindre l'Arctique que pour rejoindre ${name}.`,
+        dist_closer: (name, km, tKm) => `${name} n'est qu'à ${km.toLocaleString('fr')} km de Bergen — plus proche que Tromsø (${tKm.toLocaleString('fr')} km). Bergen est plus proche de ${name} que du nord arctique de son propre pays.`,
+        dist_somewhat: (name, km, tKm) => `${name} est à ${km.toLocaleString('fr')} km de Bergen. Pas beaucoup plus loin que Tromsø (${tKm.toLocaleString('fr')} km) — le bout arctique de la Norvège que les gens imaginent quand ils pensent « météo norvégienne ».`,
+        dist_far: (name, km, tKm, ratio) => `${name} est à ${km.toLocaleString('fr')} km de Bergen. Même cette destination lointaine n'est qu'à ${ratio}× la distance de Tromsø — la Norvège est un très long pays.`,
+      },
+    };
+
+    let currentLang = 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.title = lang === 'fr'
+        ? 'Bergen vs Paris — La surprise hivernale'
+        : 'Bergen vs Paris — The Winter Surprise';
+
+      // Update toggle
+      document.querySelectorAll('#langToggle span').forEach(s => {
+        s.classList.toggle('active', s.dataset.lang === lang);
+      });
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (I18N[lang][key]) {
+          el.innerHTML = I18N[lang][key];
+        }
+      });
+
+      // Recompute stats with new labels
+      if (dailyData) { computeStats(); observeNumbers(); }
+
+      // Update distance summary
+      const sel = document.getElementById('capitalSelect');
+      if (sel && sel.value) {
+        const capital = CAPITALS.find(c => c.name === sel.value);
+        if (capital) {
+          const km = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], capital.lon, capital.lat));
+          updateDistanceSummary(capital, km);
+        }
+      }
+
+      // Update flight chart axis label
+      if (flightChart) {
+        flightChart.options.scales.x.title.text = I18N[lang].km_from_bergen;
+        flightChart.update('none');
+      }
+
+      // Reposition segmented slider after text change
+      const segContainer = document.getElementById('heatmapFilter');
+      if (segContainer) {
+        const activeBtn = segContainer.querySelector('.seg-btn.active');
+        const slider = segContainer.querySelector('.seg-slider');
+        if (activeBtn && slider) {
+          slider.style.width = activeBtn.offsetWidth + 'px';
+          slider.style.transform = `translateX(${activeBtn.offsetLeft - 3}px)`;
+        }
+      }
+    }
+
+    // Detect French users
+    function detectLang() {
+      const browserLang = navigator.language || navigator.userLanguage || '';
+      return browserLang.startsWith('fr') ? 'fr' : 'en';
+    }
+
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const BERGEN = '#2e6ea6';
+    const PARIS = '#c44e3f';
+    const GAP = '#8b7ec8';
+
+    let dailyData, monthlyData, yearMonthData, surprisesData;
+
+    async function loadData() {
+      [dailyData, monthlyData, yearMonthData, surprisesData] = await Promise.all([
+        fetch('data/daily.json').then(r => r.json()),
+        fetch('data/monthly.json').then(r => r.json()),
+        fetch('data/year_month.json').then(r => r.json()),
+        fetch('data/surprises.json').then(r => r.json()),
+      ]);
+      render();
+    }
+
+    function statCard(value, labelKey, color) {
+      const t = I18N[currentLang];
+      return `<div class="stat-card">
+        <div class="number"${color ? ` style="color:${color}"` : ''}>${value}</div>
+        <div class="label" data-i18n="${labelKey}">${t[labelKey]}</div>
+      </div>`;
+    }
+
+    function pearson(xs, ys) {
+      const n = xs.length;
+      const mx = xs.reduce((a, b) => a + b) / n;
+      const my = ys.reduce((a, b) => a + b) / n;
+      const num = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0);
+      const dx = Math.sqrt(xs.reduce((s, x) => s + (x - mx) ** 2, 0));
+      const dy = Math.sqrt(ys.reduce((s, y) => s + (y - my) ** 2, 0));
+      return dx && dy ? num / (dx * dy) : 0;
+    }
+
+    function computeStats() {
+      const b = dailyData.bergen_mean;
+      const p = dailyData.paris_mean;
+      const dates = dailyData.dates;
+      const n = b.length;
+
+      // Seasonal gaps
+      function meanGap(months) {
+        let sum = 0, count = 0;
+        for (let i = 0; i < n; i++) {
+          const m = parseInt(dates[i].split('-')[1]);
+          if (months.includes(m)) { sum += Math.abs(b[i] - p[i]); count++; }
+        }
+        return (sum / count).toFixed(1);
+      }
+
+      const winterGap = meanGap([12, 1, 2]);
+      const summerGap = meanGap([6, 7, 8]);
+      const avgGap = (b.reduce((s, v, i) => s + Math.abs(v - p[i]), 0) / n).toFixed(1);
+
+      document.getElementById('keyStats').innerHTML =
+        statCard(winterGap + '°C', 'stat_winter', 'var(--bergen)') +
+        statCard(summerGap + '°C', 'stat_summer', 'var(--paris)') +
+        statCard(avgGap + '°C', 'stat_avg');
+
+      // Correlation
+      const rDaily = Math.round(pearson(b, p) * 100);
+      const byMonth = {};
+      for (let i = 0; i < n; i++) {
+        const ym = dates[i].slice(0, 7);
+        if (!byMonth[ym]) byMonth[ym] = { b: [], p: [] };
+        byMonth[ym].b.push(b[i]);
+        byMonth[ym].p.push(p[i]);
+      }
+      const mKeys = Object.keys(byMonth).sort();
+      const bMonthly = mKeys.map(k => byMonth[k].b.reduce((a, v) => a + v, 0) / byMonth[k].b.length);
+      const pMonthly = mKeys.map(k => byMonth[k].p.reduce((a, v) => a + v, 0) / byMonth[k].p.length);
+      const rMonthly = Math.round(pearson(bMonthly, pMonthly) * 100);
+
+      document.getElementById('corrStats').innerHTML =
+        statCard(rDaily + '%', 'stat_daily_sync') +
+        statCard(rMonthly + '%', 'stat_monthly_sync');
+
+      // Snow stats (5mm+ threshold)
+      const SNOW_THRESHOLD = 5;
+      const snowIdx = [];
+      for (let i = 0; i < n; i++) {
+        if (dailyData.bergen_snow[i] >= SNOW_THRESHOLD) snowIdx.push(i);
+      }
+      const snowN = snowIdx.length;
+      const snowBergen = snowIdx.map(i => b[i]);
+      const snowParis = snowIdx.map(i => p[i]);
+      const snowAvg = (snowBergen.reduce((a, v) => a + v, 0) / snowN).toFixed(1);
+      const aboveZero = Math.round(snowBergen.filter(t => t >= 0).length / snowN * 100);
+      const belowMinus5 = Math.round(snowBergen.filter(t => t < -5).length / snowN * 100);
+      const gapParis = Math.abs(snowBergen.reduce((a, v) => a + v, 0) / snowN -
+                                snowParis.reduce((a, v) => a + v, 0) / snowN).toFixed(1);
+
+      document.getElementById('snowStats').innerHTML =
+        statCard(snowAvg + '°C', 'stat_snow_avg') +
+        statCard(aboveZero + '%', 'stat_snow_above0') +
+        statCard(belowMinus5 + '%', 'stat_snow_below5');
+
+      // Tromsø gap requires separate fetch — use pre-computed if available, otherwise show Paris only
+      document.getElementById('snowGapStats').innerHTML =
+        statCard(gapParis + '°C', 'stat_snow_paris', 'var(--paris)') +
+        statCard('6.6°C', 'stat_snow_tromso', '#7bafd4');
+    }
+
+    function render() {
+      computeStats();
+      observeNumbers();
+      renderMonthlyChart();
+      renderHeatmap();
+      renderDailyChart(2025);
+      setupYearSlider();
+    }
+
+    function renderMonthlyChart() {
+      const bergenTemps = monthlyData.map(m => m.bergen_mean);
+      const parisTemps = monthlyData.map(m => m.paris_mean);
+
+      // Custom plugin: draw thin stems between Bergen and Paris points
+      const stemPlugin = {
+        id: 'lollipopStems',
+        beforeDatasetsDraw(chart) {
+          const { ctx } = chart;
+          const bergenMeta = chart.getDatasetMeta(1);
+          const parisMeta = chart.getDatasetMeta(2);
+          ctx.save();
+          ctx.strokeStyle = '#d0cfc8';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < bergenMeta.data.length; i++) {
+            const b = bergenMeta.data[i];
+            const p = parisMeta.data[i];
+            ctx.beginPath();
+            ctx.moveTo(b.x, b.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      };
+
+      new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            // Invisible bar just to create the category axis
+            { type: 'bar', data: new Array(12).fill(null), backgroundColor: 'transparent' },
+            {
+              type: 'line',
+              label: 'Bergen',
+              data: bergenTemps,
+              backgroundColor: BERGEN,
+              borderColor: 'transparent',
+              pointRadius: 7,
+              pointHoverRadius: 9,
+              showLine: false,
+            },
+            {
+              type: 'line',
+              label: 'Paris',
+              data: parisTemps,
+              backgroundColor: PARIS,
+              borderColor: 'transparent',
+              pointRadius: 7,
+              pointHoverRadius: 9,
+              showLine: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              filter: ctx => ctx.datasetIndex > 0,
+              callbacks: {
+                afterBody: items => {
+                  const idx = items[0].dataIndex;
+                  const diff = monthlyData[idx].mean_diff;
+                  return `Gap: ${diff > 0 ? '+' : ''}${diff}°C`;
+                },
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}°C`,
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: '°C' },
+              grid: { color: '#e5e5e0' },
+            },
+            x: {
+              grid: { display: false },
+            },
+          },
+        },
+        plugins: [stemPlugin],
+      });
+    }
+
+    function renderHeatmap() {
+      const el = document.getElementById('heatmap');
+      el.innerHTML = '<div class="cell header"></div>';
+      MONTHS.forEach(m => { el.innerHTML += `<div class="cell header">${m}</div>`; });
+
+      const lookup = {};
+      yearMonthData.forEach(d => { lookup[`${d.year}-${d.month}`] = d.mean_diff; });
+
+      for (let y = 2016; y <= 2025; y++) {
+        el.innerHTML += `<div class="cell header">${y}</div>`;
+        for (let m = 1; m <= 12; m++) {
+          const val = lookup[`${y}-${m}`];
+          if (val !== undefined) {
+            const abs = Math.abs(val);
+            let bg, fg;
+            if (val > 0) {
+              // Bergen warmer — blue
+              const t = Math.min(val / 3, 1);
+              bg = `rgba(46, 110, 166, ${t * 0.55 + 0.15})`;
+              fg = t > 0.4 ? '#fff' : '#1a1a1a';
+            } else if (abs <= 1) {
+              // Nearly identical — almost white
+              bg = `rgba(196, 78, 63, 0.04)`;
+              fg = '#1a1a1a';
+            } else if (abs <= 2) {
+              bg = `rgba(196, 78, 63, 0.08)`;
+              fg = '#1a1a1a';
+            } else if (abs <= 3) {
+              bg = `rgba(196, 78, 63, 0.14)`;
+              fg = '#1a1a1a';
+            } else {
+              // Bigger gap — progressively deeper
+              const t = Math.min((abs - 3) / 7, 1);
+              bg = `rgba(196, 78, 63, ${t * 0.45 + 0.18})`;
+              fg = t > 0.5 ? '#fff' : '#1a1a1a';
+            }
+
+            // Classify for filtering
+            let filterClass = 'typical';
+            if (abs < 3) filterClass = 'close';
+            else if (abs > 6) filterClass = 'far';
+
+            el.innerHTML += `<div class="cell" data-filter-cat="${filterClass}" style="background:${bg};color:${fg}" title="${y} ${MONTHS[m-1]}: ${val > 0 ? '+' : ''}${val}°C">${val > 0 ? '+' : ''}${val}</div>`;
+          } else {
+            el.innerHTML += `<div class="cell">–</div>`;
+          }
+        }
+      }
+
+      // Set up segmented control
+      const segContainer = document.getElementById('heatmapFilter');
+      const slider = segContainer.querySelector('.seg-slider');
+      const segBtns = segContainer.querySelectorAll('.seg-btn');
+
+      function moveSlider(btn) {
+        slider.style.width = btn.offsetWidth + 'px';
+        slider.style.transform = `translateX(${btn.offsetLeft - 3}px)`;
+      }
+
+      // Position slider on first active button
+      const initialActive = segContainer.querySelector('.seg-btn.active');
+      moveSlider(initialActive);
+
+      segBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          segBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          moveSlider(btn);
+
+          const filter = btn.dataset.filter;
+          document.querySelectorAll('#heatmap .cell[data-filter-cat]').forEach(cell => {
+            if (filter === 'all' || cell.dataset.filterCat === filter) {
+              cell.classList.remove('dimmed');
+            } else {
+              cell.classList.add('dimmed');
+            }
+          });
+        });
+      });
+    }
+
+
+
+    let dailyChart;
+    function renderDailyChart(year) {
+      const startIdx = dailyData.dates.findIndex(d => d.startsWith(`${year}-`));
+      const endIdx = dailyData.dates.findLastIndex(d => d.startsWith(`${year}-`));
+      if (startIdx === -1) return;
+
+      const dates = dailyData.dates.slice(startIdx, endIdx + 1);
+      const bergen = dailyData.bergen_mean.slice(startIdx, endIdx + 1);
+      const paris = dailyData.paris_mean.slice(startIdx, endIdx + 1);
+
+      const config = {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: 'Bergen',
+              data: bergen,
+              borderColor: BERGEN,
+              backgroundColor: BERGEN + '15',
+              fill: true,
+              borderWidth: 1.5,
+              pointRadius: 0,
+              tension: 0.2,
+            },
+            {
+              label: 'Paris',
+              data: paris,
+              borderColor: PARIS,
+              backgroundColor: PARIS + '15',
+              fill: true,
+              borderWidth: 1.5,
+              pointRadius: 0,
+              tension: 0.2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}°C`,
+                afterBody: items => {
+                  if (items.length >= 2) {
+                    const diff = items[0].parsed.y - items[1].parsed.y;
+                    return `Gap: ${diff > 0 ? '+' : ''}${diff.toFixed(1)}°C`;
+                  }
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: '°C' },
+              grid: { color: '#e5e5e0' },
+            },
+            x: {
+              type: 'category',
+              ticks: {
+                maxTicksLimit: 12,
+                callback: function(val, idx) {
+                  const d = this.getLabelForValue(val);
+                  const m = parseInt(d.split('-')[1]);
+                  const day = parseInt(d.split('-')[2]);
+                  return day === 1 ? MONTHS[m - 1] : '';
+                }
+              },
+              grid: { display: false },
+            },
+          },
+        },
+      };
+
+      if (dailyChart) {
+        dailyChart.destroy();
+      }
+      dailyChart = new Chart(document.getElementById('dailyChart'), config);
+    }
+
+    function setupYearSlider() {
+      const slider = document.getElementById('yearSlider');
+      const label = document.getElementById('yearLabel');
+      slider.addEventListener('input', () => {
+        const year = parseInt(slider.value);
+        label.textContent = year;
+        renderDailyChart(year);
+      });
+    }
+
+    // --- Background map ---
+    const BERGEN_COORD = [5.32, 60.39];
+    const PARIS_COORD = [2.35, 48.86];
+    // Shift center slightly north of midpoint to show more of Norway
+    const MAP_CENTER = [(BERGEN_COORD[0] + PARIS_COORD[0]) / 2,
+                        (BERGEN_COORD[1] + PARIS_COORD[1]) / 2 + 1.5];
+
+    async function renderMap() {
+      const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
+      const world = await resp.json();
+      const countries = topojson.feature(world, world.objects.countries);
+
+      const canvas = document.getElementById('mapBg');
+      const dpr = window.devicePixelRatio || 1;
+      const size = Math.min(window.innerWidth * 0.5, 480);
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      // Simple Mercator projection centered on Bergen-Paris midpoint
+      const scale = size / 36; // degrees visible ~ 36
+      function project(lon, lat) {
+        const x = size / 2 + (lon - MAP_CENTER[0]) * scale;
+        const latRad = lat * Math.PI / 180;
+        const centerRad = MAP_CENTER[1] * Math.PI / 180;
+        const y = size / 2 - (Math.log(Math.tan(Math.PI/4 + latRad/2)) -
+                               Math.log(Math.tan(Math.PI/4 + centerRad/2))) *
+                              (scale * 180 / Math.PI);
+        return [x, y];
+      }
+
+      // Draw country outlines
+      ctx.strokeStyle = '#b0ada2';
+      ctx.lineWidth = 1.2;
+      ctx.fillStyle = 'transparent';
+
+      for (const feature of countries.features) {
+        const geom = feature.geometry;
+        const rings = geom.type === 'Polygon' ? [geom.coordinates] :
+                      geom.type === 'MultiPolygon' ? geom.coordinates : [];
+
+        for (const polygon of rings) {
+          for (const ring of polygon) {
+            ctx.beginPath();
+            let started = false;
+            for (const [lon, lat] of ring) {
+              // Only draw features roughly in/near Europe
+              if (lon < -30 || lon > 50 || lat < 25 || lat > 75) {
+                // skip far-away points but keep drawing
+              }
+              const [x, y] = project(lon, lat);
+              if (!started) { ctx.moveTo(x, y); started = true; }
+              else { ctx.lineTo(x, y); }
+            }
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Mark cities
+      function drawCity(coord, color, label, above) {
+        const [x, y] = project(coord[0], coord[1]);
+        // Dot
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        // Ring
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        // Label
+        ctx.font = '600 11px -apple-system, system-ui, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, above ? y - 14 : y + 20);
+      }
+
+      drawCity(BERGEN_COORD, '#2e6ea6', 'Bergen', true);
+      drawCity(PARIS_COORD, '#c44e3f', 'Paris', false);
+
+      // Radial fade mask: clear outside a circle
+      // Distance between cities in pixels for sizing
+      const [bx, by] = project(BERGEN_COORD[0], BERGEN_COORD[1]);
+      const [px, py] = project(PARIS_COORD[0], PARIS_COORD[1]);
+      const cityDist = Math.sqrt((bx - px) ** 2 + (by - py) ** 2);
+      const radius = cityDist * 1.2;
+      // Center the fade on the midpoint between the two cities, not the map center
+      const midCoord = [(BERGEN_COORD[0] + PARIS_COORD[0]) / 2,
+                        (BERGEN_COORD[1] + PARIS_COORD[1]) / 2];
+      const [cx, cy] = project(midCoord[0], midCoord[1]);
+
+      // Apply oval fade using destination-out compositing
+      // Squeeze horizontally to hide UK/Ireland
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(0.6, 1); // narrower horizontally
+      const grad = ctx.createRadialGradient(0, 0, radius * 0.6, 0, 0, radius);
+      grad.addColorStop(0, 'rgba(250,250,248,0)');
+      grad.addColorStop(1, 'rgba(250,250,248,1)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(-size, -size, size * 2, size * 2);
+      ctx.restore();
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Reduce overall opacity
+      canvas.style.opacity = '0.6';
+
+      // Position: vertically centered with the header
+      canvas.style.top = '20px';
+    }
+
+    // Parallax: map scrolls slower than content, staying visible longer
+    function setupParallax() {
+      const canvas = document.getElementById('mapBg');
+      canvas.style.position = 'fixed';
+      canvas.style.top = '-20px';
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        canvas.style.transform = `translateY(${-scrollY * 0.15}px)`;
+        // Fade out as you scroll past the header area
+        const fade = Math.max(0, 1 - scrollY / 1600);
+        canvas.style.opacity = 0.6 * fade;
+      }, { passive: true });
+    }
+
+    // --- Flight map and chart ---
+    const TROMSO = { name: 'Tromsø', lon: 18.96, lat: 69.65 };
+    const CAPITALS = [
+      { name: 'Nice',       lon: 7.26,   lat: 43.70 },
+      { name: 'Lisbon',     lon: -9.14,  lat: 38.72 },
+      { name: 'Madrid',     lon: -3.70,  lat: 40.42 },
+      { name: 'Rome',       lon: 12.50,  lat: 41.90 },
+      { name: 'Athens',     lon: 23.73,  lat: 37.98 },
+      { name: 'London',     lon: -0.13,  lat: 51.51 },
+      { name: 'Dublin',     lon: -6.26,  lat: 53.35 },
+      { name: 'Amsterdam',  lon: 4.90,   lat: 52.37 },
+      { name: 'Brussels',   lon: 4.35,   lat: 50.85 },
+      { name: 'Berlin',     lon: 13.40,  lat: 52.52 },
+      { name: 'Prague',     lon: 14.44,  lat: 50.08 },
+      { name: 'Vienna',     lon: 16.37,  lat: 48.21 },
+      { name: 'Budapest',   lon: 19.04,  lat: 47.50 },
+      { name: 'Warsaw',     lon: 21.01,  lat: 52.23 },
+      { name: 'Copenhagen', lon: 12.57,  lat: 55.68 },
+      { name: 'Stockholm',  lon: 18.07,  lat: 59.33 },
+      { name: 'Helsinki',   lon: 24.94,  lat: 60.17 },
+      { name: 'Reykjavik',  lon: -21.94, lat: 64.15 },
+      { name: 'Bucharest',  lon: 26.10,  lat: 44.43 },
+    ].sort((a, b) => a.name.localeCompare(b.name));
+
+    function haversineKm(lon1, lat1, lon2, lat2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 +
+                Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+                Math.sin(dLon/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    const TROMSO_KM = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], TROMSO.lon, TROMSO.lat));
+    const PARIS_KM = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], PARIS_COORD[0], PARIS_COORD[1]));
+
+    let flightMapData = null; // cache the topojson
+    let flightChart = null;
+
+    async function initFlightSection() {
+      const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
+      flightMapData = await resp.json();
+
+      // Populate dropdown
+      const sel = document.getElementById('capitalSelect');
+      CAPITALS.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.text = c.name;
+        if (c.name === 'Nice') opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', () => updateFlightSection(sel.value, true));
+
+      updateFlightSection('Nice', false);
+    }
+
+    function updateFlightSection(capitalName, animate = true) {
+      const capital = CAPITALS.find(c => c.name === capitalName);
+      const capitalKm = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], capital.lon, capital.lat));
+
+      if (!animate) {
+        renderFlightMap(capital, capitalKm);
+        renderFlightChart(capital, capitalKm);
+        updateDistanceSummary(capital, capitalKm);
+        return;
+      }
+
+      // Fade out, update, fade in
+      const mapCanvas = document.getElementById('flightMap');
+      const summary = document.getElementById('distanceSummary');
+      mapCanvas.style.opacity = '0';
+      summary.style.opacity = '0';
+
+      setTimeout(() => {
+        renderFlightMap(capital, capitalKm);
+        renderFlightChart(capital, capitalKm);
+        updateDistanceSummary(capital, capitalKm);
+        mapCanvas.style.opacity = '1';
+        summary.style.opacity = '1';
+      }, 300);
+    }
+
+    function updateDistanceSummary(capital, capitalKm) {
+      const el = document.getElementById('distanceSummary');
+      const t = I18N[currentLang];
+
+      if (Math.abs(capitalKm - TROMSO_KM) < 150) {
+        el.textContent = t.dist_same(capital.name, capitalKm, TROMSO_KM);
+      } else if (capitalKm < TROMSO_KM) {
+        el.textContent = t.dist_closer(capital.name, capitalKm, TROMSO_KM);
+      } else if (capitalKm < TROMSO_KM * 1.5) {
+        el.textContent = t.dist_somewhat(capital.name, capitalKm, TROMSO_KM);
+      } else {
+        el.textContent = t.dist_far(capital.name, capitalKm, TROMSO_KM, Math.round(capitalKm / TROMSO_KM));
+      }
+    }
+
+    function renderFlightMap(capital, capitalKm) {
+      const countries = topojson.feature(flightMapData, flightMapData.objects.countries);
+
+      const canvas = document.getElementById('flightMap');
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.parentElement.clientWidth - 48;
+      const height = Math.min(480, width * 1.1);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      // Center map to fit Bergen, Tromsø, Paris, and selected capital
+      const allLons = [BERGEN_COORD[0], TROMSO.lon, PARIS_COORD[0], capital.lon];
+      const allLats = [BERGEN_COORD[1], TROMSO.lat, PARIS_COORD[1], capital.lat];
+      const mapCenter = [
+        (Math.min(...allLons) + Math.max(...allLons)) / 2,
+        (Math.min(...allLats) + Math.max(...allLats)) / 2,
+      ];
+      const lonSpan = Math.max(...allLons) - Math.min(...allLons) + 20;
+      const latSpan = Math.max(...allLats) - Math.min(...allLats) + 10;
+      const scale = Math.min(width / lonSpan, height / (latSpan * 1.8));
+
+      function project(lon, lat) {
+        const x = width / 2 + (lon - mapCenter[0]) * scale;
+        const latRad = lat * Math.PI / 180;
+        const centerRad = mapCenter[1] * Math.PI / 180;
+        const y = height / 2 - (Math.log(Math.tan(Math.PI/4 + latRad/2)) -
+                                 Math.log(Math.tan(Math.PI/4 + centerRad/2))) *
+                                (scale * 180 / Math.PI);
+        return [x, y];
+      }
+
+      // Draw country outlines
+      ctx.strokeStyle = '#d5d3cb';
+      ctx.lineWidth = 0.8;
+      for (const feature of countries.features) {
+        const geom = feature.geometry;
+        const rings = geom.type === 'Polygon' ? [geom.coordinates] :
+                      geom.type === 'MultiPolygon' ? geom.coordinates : [];
+        for (const polygon of rings) {
+          for (const ring of polygon) {
+            ctx.beginPath();
+            let started = false;
+            for (const [lon, lat] of ring) {
+              const [x, y] = project(lon, lat);
+              if (!started) { ctx.moveTo(x, y); started = true; }
+              else { ctx.lineTo(x, y); }
+            }
+            ctx.stroke();
+          }
+        }
+      }
+
+      const [bx, by] = project(BERGEN_COORD[0], BERGEN_COORD[1]);
+      const WARM = '#d4956a';
+      const COOL = '#7bafd4';
+
+      // Flight line helper
+      function drawFlightLine(toLon, toLat, color) {
+        const [dx, dy] = project(toLon, toLat);
+        ctx.beginPath();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(bx, by);
+        ctx.lineTo(dx, dy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // City dot helper
+      function drawCityDot(lon, lat, color, label, labelPos) {
+        const [x, y] = project(lon, lat);
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.font = '600 12px -apple-system, system-ui, sans-serif';
+        ctx.fillStyle = color;
+        const pad = 10;
+        if (labelPos === 'above') {
+          ctx.textAlign = 'center'; ctx.fillText(label, x, y - pad);
+        } else if (labelPos === 'below') {
+          ctx.textAlign = 'center'; ctx.fillText(label, x, y + pad + 10);
+        } else if (labelPos === 'left') {
+          ctx.textAlign = 'right'; ctx.fillText(label, x - pad, y + 4);
+        } else {
+          ctx.textAlign = 'left'; ctx.fillText(label, x + pad, y + 4);
+        }
+      }
+
+      // Draw lines
+      drawFlightLine(TROMSO.lon, TROMSO.lat, COOL);
+      drawFlightLine(PARIS_COORD[0], PARIS_COORD[1], PARIS);
+      drawFlightLine(capital.lon, capital.lat, WARM);
+
+      // Draw cities
+      drawCityDot(TROMSO.lon, TROMSO.lat, COOL, 'Tromsø (Arctic Norway)', 'right');
+      drawCityDot(PARIS_COORD[0], PARIS_COORD[1], PARIS, 'Paris', 'left');
+      drawCityDot(capital.lon, capital.lat, WARM, capital.name, 'below');
+
+      // Bergen (on top, larger)
+      ctx.beginPath();
+      ctx.arc(bx, by, 6, 0, Math.PI * 2);
+      ctx.fillStyle = BERGEN;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(bx, by, 10, 0, Math.PI * 2);
+      ctx.strokeStyle = BERGEN;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.font = '700 13px -apple-system, system-ui, sans-serif';
+      ctx.fillStyle = BERGEN;
+      ctx.textAlign = 'right';
+      ctx.fillText('Bergen', bx - 16, by + 5);
+    }
+
+    const planePlugin = {
+      id: 'planeIcons',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        ctx.save();
+        meta.data.forEach((bar, i) => {
+          const color = chart.data.datasets[0].borderColor[i];
+          ctx.font = '16px sans-serif';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = color;
+          ctx.fillText('✈', bar.x + 6, bar.y);
+        });
+        ctx.restore();
+      }
+    };
+
+    function renderFlightChart(capital, capitalKm) {
+      // Fixed order: Tromsø, Paris, selected city (top to bottom)
+      const data = [
+        { name: 'Tromsø', km: TROMSO_KM, color: '#7bafd4' },
+        { name: 'Paris', km: PARIS_KM, color: PARIS },
+        { name: capital.name, km: capitalKm, color: '#d4956a' },
+      ];
+
+      const config = {
+        type: 'bar',
+        data: {
+          labels: data.map(d => d.name),
+          datasets: [{
+            data: data.map(d => d.km),
+            backgroundColor: data.map(d => d.color + '30'),
+            borderColor: data.map(d => d.color),
+            borderWidth: 2,
+            borderRadius: 2,
+            borderSkipped: 'start',
+            barThickness: 6,
+          }],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 800,
+            easing: 'easeOutCubic',
+          },
+          layout: {
+            padding: { right: 28 },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${data[ctx.dataIndex].km.toLocaleString()} ${I18N[currentLang].km_from_bergen}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: I18N[currentLang].km_from_bergen },
+              grid: { color: '#e5e5e0' },
+              beginAtZero: true,
+            },
+            y: { grid: { display: false } },
+          },
+        },
+        plugins: [planePlugin],
+      };
+
+      if (flightChart) {
+        flightChart.data.labels = data.map(d => d.name);
+        flightChart.data.datasets[0].data = data.map(d => d.km);
+        flightChart.data.datasets[0].backgroundColor = data.map(d => d.color + '30');
+        flightChart.data.datasets[0].borderColor = data.map(d => d.color);
+        flightChart.update('active');
+        return;
+      }
+      flightChart = new Chart(document.getElementById('flightChart'), config);
+    }
+
+    // --- Animated number counters ---
+    function animateNumber(el) {
+      if (el.dataset.animated) return;
+      el.dataset.animated = '1';
+
+      const text = el.textContent.trim();
+      // Extract numeric part and suffix (°C, %, ×, etc.)
+      const match = text.match(/^([+-]?)(\d+\.?\d*)\s*(.*)$/);
+      if (!match) return;
+
+      const sign = match[1];
+      const target = parseFloat(match[2]);
+      const suffix = match[3];
+      const hasDecimal = match[2].includes('.');
+      const duration = 600;
+      const start = performance.now();
+
+      function step(now) {
+        const t = Math.min((now - start) / duration, 1);
+        // Ease out cubic
+        const ease = 1 - (1 - t) ** 3;
+        const current = target * ease;
+        el.textContent = sign + (hasDecimal ? current.toFixed(1) : Math.round(current)) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+      }
+
+      el.textContent = sign + (hasDecimal ? '0.0' : '0') + suffix;
+      requestAnimationFrame(step);
+    }
+
+    const numberObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateNumber(entry.target);
+          numberObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    function observeNumbers() {
+      document.querySelectorAll('.stat-card .number').forEach(el => {
+        el.removeAttribute('data-animated');
+        numberObserver.observe(el);
+      });
+    }
+
+    // --- Snowfall effect ---
+    const snowCanvas = document.getElementById('snowCanvas');
+    const snowCtx = snowCanvas.getContext('2d');
+    let snowflakes = [];
+    let snowActive = false;
+    let snowAnimId = null;
+
+    function initSnow() {
+      const dpr = window.devicePixelRatio || 1;
+      snowCanvas.width = window.innerWidth * dpr;
+      snowCanvas.height = window.innerHeight * dpr;
+      snowCanvas.style.width = window.innerWidth + 'px';
+      snowCanvas.style.height = window.innerHeight + 'px';
+      snowCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      snowflakes = [];
+      for (let i = 0; i < 80; i++) {
+        snowflakes.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 3 + 1.5,
+          vx: Math.random() * 0.6 - 0.3,
+          vy: Math.random() * 1.2 + 0.4,
+          opacity: Math.random() * 0.4 + 0.4,
+        });
+      }
+    }
+
+    function drawSnow() {
+      if (!snowActive) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      snowCtx.clearRect(0, 0, w, h);
+
+      for (const f of snowflakes) {
+        f.x += f.vx;
+        f.y += f.vy;
+        if (f.y > h) { f.y = -5; f.x = Math.random() * w; }
+        if (f.x > w) f.x = 0;
+        if (f.x < 0) f.x = w;
+
+        snowCtx.beginPath();
+        snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        snowCtx.fillStyle = `rgba(160, 170, 190, ${f.opacity})`;
+        snowCtx.fill();
+      }
+      snowAnimId = requestAnimationFrame(drawSnow);
+    }
+
+    function startSnow() {
+      if (snowActive) return;
+      snowActive = true;
+      initSnow();
+      snowCanvas.style.opacity = '1';
+      drawSnow();
+    }
+
+    function stopSnow() {
+      snowCanvas.style.opacity = '0';
+      setTimeout(() => {
+        snowActive = false;
+        if (snowAnimId) cancelAnimationFrame(snowAnimId);
+        snowCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+      }, 1500);
+    }
+
+    // Observe snow section
+    const snowObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) startSnow();
+        else stopSnow();
+      });
+    }, { threshold: 0.05 });
+
+    // Will observe after DOM is ready
+    const snowSection = document.getElementById('snowSection');
+    if (snowSection) snowObserver.observe(snowSection);
+
+    window.addEventListener('resize', () => {
+      if (snowActive) initSnow();
+    }, { passive: true });
+
+    // Language toggle
+    document.querySelectorAll('#langToggle span').forEach(s => {
+      s.addEventListener('click', () => setLang(s.dataset.lang));
+    });
+
+    // Auto-detect and apply language
+    const detectedLang = detectLang();
+    if (detectedLang === 'fr') {
+      setLang('fr');
+    }
+
+    renderMap();
+    setupParallax();
+    initFlightSection();
+    loadData();
+  </script>
+</body>
+</html>

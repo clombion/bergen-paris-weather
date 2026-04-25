@@ -1,0 +1,98 @@
+[
+  {
+    "month": 1,
+    "bergen_mean": 0.6,
+    "paris_mean": 4.5,
+    "mean_diff": -3.9,
+    "mean_abs_diff": 5.4,
+    "within_3c_pct": 29
+  },
+  {
+    "month": 2,
+    "bergen_mean": 1.1,
+    "paris_mean": 6.0,
+    "mean_diff": -4.9,
+    "mean_abs_diff": 5.4,
+    "within_3c_pct": 30
+  },
+  {
+    "month": 3,
+    "bergen_mean": 2.8,
+    "paris_mean": 8.1,
+    "mean_diff": -5.3,
+    "mean_abs_diff": 5.4,
+    "within_3c_pct": 23
+  },
+  {
+    "month": 4,
+    "bergen_mean": 5.7,
+    "paris_mean": 10.9,
+    "mean_diff": -5.2,
+    "mean_abs_diff": 5.4,
+    "within_3c_pct": 27
+  },
+  {
+    "month": 5,
+    "bergen_mean": 10.0,
+    "paris_mean": 14.6,
+    "mean_diff": -4.6,
+    "mean_abs_diff": 5.1,
+    "within_3c_pct": 29
+  },
+  {
+    "month": 6,
+    "bergen_mean": 13.2,
+    "paris_mean": 18.9,
+    "mean_diff": -5.7,
+    "mean_abs_diff": 6.0,
+    "within_3c_pct": 24
+  },
+  {
+    "month": 7,
+    "bergen_mean": 14.3,
+    "paris_mean": 20.5,
+    "mean_diff": -6.2,
+    "mean_abs_diff": 6.4,
+    "within_3c_pct": 16
+  },
+  {
+    "month": 8,
+    "bergen_mean": 13.8,
+    "paris_mean": 20.4,
+    "mean_diff": -6.6,
+    "mean_abs_diff": 6.6,
+    "within_3c_pct": 9
+  },
+  {
+    "month": 9,
+    "bergen_mean": 11.9,
+    "paris_mean": 17.1,
+    "mean_diff": -5.2,
+    "mean_abs_diff": 5.3,
+    "within_3c_pct": 24
+  },
+  {
+    "month": 10,
+    "bergen_mean": 7.6,
+    "paris_mean": 13.1,
+    "mean_diff": -5.5,
+    "mean_abs_diff": 5.6,
+    "within_3c_pct": 20
+  },
+  {
+    "month": 11,
+    "bergen_mean": 3.8,
+    "paris_mean": 8.1,
+    "mean_diff": -4.3,
+    "mean_abs_diff": 4.7,
+    "within_3c_pct": 37
+  },
+  {
+    "month": 12,
+    "bergen_mean": 2.0,
+    "paris_mean": 5.9,
+    "mean_diff": -3.9,
+    "mean_abs_diff": 5.1,
+    "within_3c_pct": 31
+  }
+]
