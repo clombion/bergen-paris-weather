@@ -42,6 +42,16 @@ Fetched 3,653 days of daily data per city from the Open-Meteo Historical Weather
 
 Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris >35°C, Bergen <-10°C) but a sensitivity check showed removing them changed results by <0.5°C, so we dropped the filtering.
 
+Sample rows (subset of columns):
+
+| date | bergen_temp_mean | paris_temp_mean | bergen_snowfall_mm | bergen_sunshine_hours |
+|------|-----------------|----------------|-------------------|---------------------|
+| 2016-01-01 | 3.6 | 6.5 | 18.2 | 3.64 |
+| 2016-01-02 | 0.7 | 9.0 | 0.0 | 1.51 |
+| 2016-01-03 | -2.7 | 6.9 | 0.0 | 5.18 |
+
+Full table: 3,653 rows × 13 columns in `data/clean/horizon.csv`.
+
 ### Analyse
 
 **H1 was rejected** — Bergen averages 5.1°C colder than Paris, not 3°C. Only 25% of days are within the threshold.
