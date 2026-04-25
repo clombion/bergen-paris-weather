@@ -551,7 +551,7 @@
         Bergen sits on the southwest coast, warmed by the Gulf Stream,
         closer to the Mediterranean than to the Arctic.
       </p>
-      <div class="chart-wrap">
+      <div style="margin:16px 0">
         <canvas id="flightMap" height="480"></canvas>
       </div>
       <h3 style="font-weight:400;font-size:1.3rem;margin-top:32px">
@@ -631,10 +631,39 @@
         method_p1: 'Daily weather data from <strong>Open-Meteo Historical Weather API</strong> (ERA5 / ECMWF IFS reanalysis), covering 1 Jan 2016 – 31 Dec 2025 (3,653 days). Bergen coordinates: 60.39°N, 5.32°E. Paris: 48.86°N, 2.35°E.',
         method_p2: 'Cross-checked against ECMWF IFS model; Paris data agrees within 1°C on 94% of days. Bergen shows ~1.6°C model uncertainty — noted but not disqualifying. Snow days defined as days with 5mm+ snowfall.',
         km_from_bergen: 'km from Bergen',
-        dist_same: (name, km, tKm) => `${name} est à ${km.toLocaleString()} km de Bergen — presque exactement la même distance que Tromsø (${tKm.toLocaleString()} km). Il faut voyager aussi loin pour atteindre l'Arctique que pour rejoindre ${name}.`,
-        dist_closer: (name, km, tKm) => `${name} is only ${km.toLocaleString()} km from Bergen — closer than Tromsø (${tKm.toLocaleString()} km). Bergen is nearer to ${name} than to its own country's Arctic north.`,
-        dist_somewhat: (name, km, tKm) => `${name} is ${km.toLocaleString()} km from Bergen. Not that much further than Tromsø (${tKm.toLocaleString()} km) — the Arctic tip of Norway that people picture when they think "Norwegian weather."`,
-        dist_far: (name, km, tKm, ratio) => `${name} is ${km.toLocaleString()} km from Bergen. Even that far-flung destination is only ${ratio}× the distance to Tromsø — Norway is a very long country.`,
+        dist_text: (name, km, tKm, pKm, pToC) => {
+          const tMins = Math.round(tKm / 800 * 60);
+          const tTime = tMins >= 120 ? `${(tMins/60).toFixed(1)}h` : `${tMins} min`;
+          let s = `Bergen to Tromsø is ${tKm.toLocaleString()} km — about the same as Bergen to Paris (${pKm.toLocaleString()} km). `;
+          if (Math.abs(km - tKm) < 150) {
+            s += `For comparison, ${name} is almost exactly the same distance (${km.toLocaleString()} km) — you'd travel as far to reach ${name} as to reach Arctic Norway.`;
+          } else if (km < tKm) {
+            s += `For comparison, ${name} is only ${km.toLocaleString()} km away — a shorter trip than to Norway's own Arctic north.`;
+          } else if (km < tKm * 2) {
+            s += `For comparison, ${name} is ${km.toLocaleString()} km away — not that much further than Tromsø.`;
+          } else {
+            s += `For comparison, even ${name}, at ${km.toLocaleString()} km, is only ${(km / tKm).toFixed(1)}× the Bergen–Tromsø distance.`;
+          }
+          const pMins = Math.round(pToC / 800 * 60);
+          const pTime = pMins >= 120 ? `${Math.floor(pMins/60)}h and ${pMins%60} min` : `${pMins} min`;
+          const bpMins = Math.round(pKm / 800 * 60);
+          const pTimeFactor = (bpMins / pMins).toFixed(1);
+          const ratio = pKm / pToC;
+          function ratioTextEn(r) {
+            if (r >= 1.8 && r <= 2.2) return 'twice as fast';
+            if (r >= 2.8 && r <= 3.2) return 'three times faster';
+            if (r >= 3.8 && r <= 4.2) return 'four times faster';
+            return `about ${r.toFixed(1)}× faster`;
+          }
+          if (ratio > 1.3) {
+            s += ` On the other hand, Paris–${name} takes ${pTime} by plane, ${ratioTextEn(ratio)} than Paris–Bergen.`;
+          } else if (pToC > pKm * 1.15) {
+            s += ` Interestingly, Paris–${name} (${pToC.toLocaleString()} km) is even longer than Paris–Bergen.`;
+          } else {
+            s += ` Paris–${name} is about the same distance as Paris–Bergen (${pToC.toLocaleString()} km).`;
+          }
+          return s;
+        },
       },
       fr: {
         title: 'Bergen n\'est pas le grand nord<br>que vous imaginez',
@@ -677,10 +706,37 @@
         method_p1: 'Données météorologiques quotidiennes provenant de l\'<strong>API Open-Meteo Historical Weather</strong> (réanalyse ERA5 / ECMWF IFS), couvrant du 1er janvier 2016 au 31 décembre 2025 (3\u00a0653 jours). Coordonnées Bergen : 60,39°N, 5,32°E. Paris : 48,86°N, 2,35°E.',
         method_p2: 'Vérifié par croisement avec le modèle ECMWF IFS ; les données de Paris concordent à 1°C près sur 94% des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire. Jours de neige définis comme jours avec 5mm+ de chutes de neige.',
         km_from_bergen: 'km depuis Bergen',
-        dist_same: (name, km, tKm) => `${name} est à ${km.toLocaleString('fr')} km de Bergen — presque exactement la même distance que Tromsø (${tKm.toLocaleString('fr')} km). Il faut voyager aussi loin pour atteindre l'Arctique que pour rejoindre ${name}.`,
-        dist_closer: (name, km, tKm) => `${name} n'est qu'à ${km.toLocaleString('fr')} km de Bergen — plus proche que Tromsø (${tKm.toLocaleString('fr')} km). Bergen est plus proche de ${name} que du nord arctique de son propre pays.`,
-        dist_somewhat: (name, km, tKm) => `${name} est à ${km.toLocaleString('fr')} km de Bergen. Pas beaucoup plus loin que Tromsø (${tKm.toLocaleString('fr')} km) — le bout arctique de la Norvège que les gens imaginent quand ils pensent « météo norvégienne ».`,
-        dist_far: (name, km, tKm, ratio) => `${name} est à ${km.toLocaleString('fr')} km de Bergen. Même cette destination lointaine n'est qu'à ${ratio}× la distance de Tromsø — la Norvège est un très long pays.`,
+        dist_text: (name, km, tKm, pKm, pToC) => {
+          let s = `Bergen–Tromsø fait ${tKm.toLocaleString('fr')} km — à peu près autant que Bergen–Paris (${pKm.toLocaleString('fr')} km). `;
+          if (Math.abs(km - tKm) < 150) {
+            s += `En comparaison, ${name} est presque à la même distance (${km.toLocaleString('fr')} km) — il faut voyager aussi loin pour atteindre ${name} que pour rejoindre la Norvège arctique.`;
+          } else if (km < tKm) {
+            s += `En comparaison, ${name} n'est qu'à ${km.toLocaleString('fr')} km — un trajet plus court que vers le nord arctique de la Norvège.`;
+          } else if (km < tKm * 2) {
+            s += `En comparaison, ${name} est à ${km.toLocaleString('fr')} km — pas beaucoup plus loin que Tromsø.`;
+          } else {
+            s += `En comparaison, même ${name}, à ${km.toLocaleString('fr')} km, ne représente que ${(km / tKm).toFixed(1)}× la distance Bergen–Tromsø.`;
+          }
+          const pMins = Math.round(pToC / 800 * 60);
+          const pTime = pMins >= 120 ? `${Math.floor(pMins/60)}h et ${pMins%60} min` : `${pMins} min`;
+          const bpMins = Math.round(pKm / 800 * 60);
+          const pTimeFactor = (bpMins / pMins).toFixed(1);
+          const ratio = pKm / pToC;
+          function ratioTextFr(r) {
+            if (r >= 1.8 && r <= 2.2) return 'deux fois plus rapide';
+            if (r >= 2.8 && r <= 3.2) return 'trois fois plus rapide';
+            if (r >= 3.8 && r <= 4.2) return 'quatre fois plus rapide';
+            return `environ ${r.toFixed(1)}× plus rapide`;
+          }
+          if (ratio > 1.3) {
+            s += ` D'autre part, Paris–${name} ne prend que ${pTime} en avion, ${ratioTextFr(ratio)} que Paris–Bergen.`;
+          } else if (pToC > pKm * 1.15) {
+            s += ` Fait intéressant, Paris–${name} (${pToC.toLocaleString('fr')} km) est même plus long que Paris–Bergen.`;
+          } else {
+            s += ` Paris–${name} est à peu près la même distance que Paris–Bergen (${pToC.toLocaleString('fr')} km).`;
+          }
+          return s;
+        },
       },
     };
 
@@ -1419,82 +1475,72 @@
       const capital = CAPITALS.find(c => c.name === capitalName);
       const capitalKm = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], capital.lon, capital.lat));
 
-      if (!animate) {
-        renderFlightMap(capital, capitalKm);
-        renderFlightChart(capital, capitalKm);
+      renderFlightMap(capital, capitalKm);
+      renderFlightChart(capital, capitalKm);
+
+      // Fade the summary text only
+      if (animate) {
+        const summary = document.getElementById('distanceSummary');
+        summary.style.opacity = '0';
+        setTimeout(() => {
+          updateDistanceSummary(capital, capitalKm);
+          summary.style.opacity = '1';
+        }, 250);
+      } else {
         updateDistanceSummary(capital, capitalKm);
-        return;
       }
-
-      // Fade out, update, fade in
-      const mapCanvas = document.getElementById('flightMap');
-      const summary = document.getElementById('distanceSummary');
-      mapCanvas.style.opacity = '0';
-      summary.style.opacity = '0';
-
-      setTimeout(() => {
-        renderFlightMap(capital, capitalKm);
-        renderFlightChart(capital, capitalKm);
-        updateDistanceSummary(capital, capitalKm);
-        mapCanvas.style.opacity = '1';
-        summary.style.opacity = '1';
-      }, 300);
     }
 
     function updateDistanceSummary(capital, capitalKm) {
       const el = document.getElementById('distanceSummary');
+      const parisToCapital = Math.round(haversineKm(PARIS_COORD[0], PARIS_COORD[1], capital.lon, capital.lat));
       const t = I18N[currentLang];
-
-      if (Math.abs(capitalKm - TROMSO_KM) < 150) {
-        el.textContent = t.dist_same(capital.name, capitalKm, TROMSO_KM);
-      } else if (capitalKm < TROMSO_KM) {
-        el.textContent = t.dist_closer(capital.name, capitalKm, TROMSO_KM);
-      } else if (capitalKm < TROMSO_KM * 1.5) {
-        el.textContent = t.dist_somewhat(capital.name, capitalKm, TROMSO_KM);
-      } else {
-        el.textContent = t.dist_far(capital.name, capitalKm, TROMSO_KM, Math.round(capitalKm / TROMSO_KM));
-      }
+      el.innerHTML = t.dist_text(capital.name, capitalKm, TROMSO_KM, PARIS_KM, parisToCapital);
     }
 
-    function renderFlightMap(capital, capitalKm) {
-      const countries = topojson.feature(flightMapData, flightMapData.objects.countries);
+    // Flight map with cached static layer and animated city line
+    let flightMapStatic = null; // cached ImageData
+    let flightMapWidth = 0, flightMapHeight = 0, flightMapDpr = 1;
+    let flightMapProject = null;
+    let flightAnimId = null;
+    let prevCapitalCoord = null;
 
+    function buildFlightMapStatic() {
+      const countries = topojson.feature(flightMapData, flightMapData.objects.countries);
       const canvas = document.getElementById('flightMap');
-      const dpr = window.devicePixelRatio || 1;
-      const width = canvas.parentElement.clientWidth - 48;
-      const height = Math.min(480, width * 1.1);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = width + 'px';
-      canvas.style.height = height + 'px';
+      flightMapDpr = window.devicePixelRatio || 1;
+      flightMapWidth = canvas.parentElement.clientWidth;
+      flightMapHeight = Math.min(480, flightMapWidth * 1.1);
+      canvas.width = flightMapWidth * flightMapDpr;
+      canvas.height = flightMapHeight * flightMapDpr;
+      canvas.style.width = flightMapWidth + 'px';
+      canvas.style.height = flightMapHeight + 'px';
 
       const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
+      ctx.scale(flightMapDpr, flightMapDpr);
 
-      // Center map to fit Bergen, Tromsø, Paris, and selected capital
-      const allLons = [BERGEN_COORD[0], TROMSO.lon, PARIS_COORD[0], capital.lon];
-      const allLats = [BERGEN_COORD[1], TROMSO.lat, PARIS_COORD[1], capital.lat];
-      const mapCenter = [
-        (Math.min(...allLons) + Math.max(...allLons)) / 2,
-        (Math.min(...allLats) + Math.max(...allLats)) / 2,
-      ];
-      const lonSpan = Math.max(...allLons) - Math.min(...allLons) + 20;
-      const latSpan = Math.max(...allLats) - Math.min(...allLats) + 10;
-      const scale = Math.min(width / lonSpan, height / (latSpan * 1.8));
+      // Fixed projection covering all of Europe (Reykjavik to Athens)
+      const mapCenter = [8, 56];
+      const scale = flightMapWidth / 110;
 
-      function project(lon, lat) {
-        const x = width / 2 + (lon - mapCenter[0]) * scale;
+      flightMapProject = function(lon, lat) {
+        const x = flightMapWidth / 2 + (lon - mapCenter[0]) * scale;
         const latRad = lat * Math.PI / 180;
         const centerRad = mapCenter[1] * Math.PI / 180;
-        const y = height / 2 - (Math.log(Math.tan(Math.PI/4 + latRad/2)) -
-                                 Math.log(Math.tan(Math.PI/4 + centerRad/2))) *
-                                (scale * 180 / Math.PI);
+        const y = flightMapHeight / 2 - (Math.log(Math.tan(Math.PI/4 + latRad/2)) -
+                                          Math.log(Math.tan(Math.PI/4 + centerRad/2))) *
+                                         (scale * 180 / Math.PI);
         return [x, y];
-      }
+      };
 
       // Draw country outlines
-      ctx.strokeStyle = '#d5d3cb';
-      ctx.lineWidth = 0.8;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, flightMapWidth, flightMapHeight);
+      ctx.clip();
+      ctx.strokeStyle = '#c0bdb4';
+      ctx.lineWidth = 1.4;
+      const margin = 50;
       for (const feature of countries.features) {
         const geom = feature.geometry;
         const rings = geom.type === 'Polygon' ? [geom.coordinates] :
@@ -1504,7 +1550,9 @@
             ctx.beginPath();
             let started = false;
             for (const [lon, lat] of ring) {
-              const [x, y] = project(lon, lat);
+              const [x, y] = flightMapProject(lon, lat);
+              const inBounds = x > -margin && x < flightMapWidth + margin && y > -margin && y < flightMapHeight + margin;
+              if (!inBounds) { started = false; continue; }
               if (!started) { ctx.moveTo(x, y); started = true; }
               else { ctx.lineTo(x, y); }
             }
@@ -1512,56 +1560,50 @@
           }
         }
       }
+      ctx.restore();
 
-      const [bx, by] = project(BERGEN_COORD[0], BERGEN_COORD[1]);
-      const WARM = '#d4956a';
+      const [bx, by] = flightMapProject(BERGEN_COORD[0], BERGEN_COORD[1]);
       const COOL = '#7bafd4';
 
-      // Flight line helper
-      function drawFlightLine(toLon, toLat, color) {
-        const [dx, dy] = project(toLon, toLat);
-        ctx.beginPath();
-        ctx.setLineDash([6, 4]);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.moveTo(bx, by);
-        ctx.lineTo(dx, dy);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
+      // Tromsø line + dot
+      const [tx, ty] = flightMapProject(TROMSO.lon, TROMSO.lat);
+      ctx.beginPath();
+      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = COOL;
+      ctx.lineWidth = 2;
+      ctx.moveTo(bx, by);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(tx, ty, 5, 0, Math.PI * 2);
+      ctx.fillStyle = COOL;
+      ctx.fill();
+      ctx.font = '600 12px -apple-system, system-ui, sans-serif';
+      ctx.fillStyle = COOL;
+      ctx.textAlign = 'left';
+      ctx.fillText('Tromsø (Arctic Norway)', tx + 10, ty + 4);
 
-      // City dot helper
-      function drawCityDot(lon, lat, color, label, labelPos) {
-        const [x, y] = project(lon, lat);
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.font = '600 12px -apple-system, system-ui, sans-serif';
-        ctx.fillStyle = color;
-        const pad = 10;
-        if (labelPos === 'above') {
-          ctx.textAlign = 'center'; ctx.fillText(label, x, y - pad);
-        } else if (labelPos === 'below') {
-          ctx.textAlign = 'center'; ctx.fillText(label, x, y + pad + 10);
-        } else if (labelPos === 'left') {
-          ctx.textAlign = 'right'; ctx.fillText(label, x - pad, y + 4);
-        } else {
-          ctx.textAlign = 'left'; ctx.fillText(label, x + pad, y + 4);
-        }
-      }
+      // Paris line + dot
+      const [px, py] = flightMapProject(PARIS_COORD[0], PARIS_COORD[1]);
+      ctx.beginPath();
+      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = PARIS;
+      ctx.lineWidth = 2;
+      ctx.moveTo(bx, by);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(px, py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = PARIS;
+      ctx.fill();
+      ctx.font = '600 12px -apple-system, system-ui, sans-serif';
+      ctx.fillStyle = PARIS;
+      ctx.textAlign = 'right';
+      ctx.fillText('Paris', px - 10, py + 4);
 
-      // Draw lines
-      drawFlightLine(TROMSO.lon, TROMSO.lat, COOL);
-      drawFlightLine(PARIS_COORD[0], PARIS_COORD[1], PARIS);
-      drawFlightLine(capital.lon, capital.lat, WARM);
-
-      // Draw cities
-      drawCityDot(TROMSO.lon, TROMSO.lat, COOL, 'Tromsø (Arctic Norway)', 'right');
-      drawCityDot(PARIS_COORD[0], PARIS_COORD[1], PARIS, 'Paris', 'left');
-      drawCityDot(capital.lon, capital.lat, WARM, capital.name, 'below');
-
-      // Bergen (on top, larger)
+      // Bergen dot (on top)
       ctx.beginPath();
       ctx.arc(bx, by, 6, 0, Math.PI * 2);
       ctx.fillStyle = BERGEN;
@@ -1575,6 +1617,112 @@
       ctx.fillStyle = BERGEN;
       ctx.textAlign = 'right';
       ctx.fillText('Bergen', bx - 16, by + 5);
+
+      // Feather left and right edges
+      const feather = 60;
+      ctx.globalCompositeOperation = 'destination-out';
+      const leftGrad = ctx.createLinearGradient(0, 0, feather, 0);
+      leftGrad.addColorStop(0, 'rgba(0,0,0,1)');
+      leftGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = leftGrad;
+      ctx.fillRect(0, 0, feather, flightMapHeight);
+      const rightGrad = ctx.createLinearGradient(flightMapWidth - feather, 0, flightMapWidth, 0);
+      rightGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      rightGrad.addColorStop(1, 'rgba(0,0,0,1)');
+      ctx.fillStyle = rightGrad;
+      ctx.fillRect(flightMapWidth - feather, 0, feather, flightMapHeight);
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Cache the static layer
+      flightMapStatic = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    function renderFlightMap(capital, capitalKm) {
+      if (!flightMapStatic) buildFlightMapStatic();
+
+      const canvas = document.getElementById('flightMap');
+      const ctx = canvas.getContext('2d');
+      const [bx, by] = flightMapProject(BERGEN_COORD[0], BERGEN_COORD[1]);
+      const [dx, dy] = flightMapProject(capital.lon, capital.lat);
+      const WARM = '#d4956a';
+
+      // Cancel any running animation
+      if (flightAnimId) cancelAnimationFrame(flightAnimId);
+
+      const fadeOutDuration = 600;
+      const growDuration = 800;
+      const start = performance.now();
+      const hasPrev = prevCapitalCoord && (prevCapitalCoord[0] !== dx || prevCapitalCoord[1] !== dy);
+      const [prevX, prevY] = prevCapitalCoord || [bx, by];
+      const totalDuration = hasPrev ? fadeOutDuration + growDuration : growDuration;
+
+      function frame(now) {
+        const elapsed = now - start;
+
+        ctx.putImageData(flightMapStatic, 0, 0);
+        ctx.save();
+        ctx.setTransform(flightMapDpr, 0, 0, flightMapDpr, 0, 0);
+
+        if (hasPrev && elapsed < fadeOutDuration) {
+          // Phase 1: fade out old line
+          const t = elapsed / fadeOutDuration;
+          const ease = 1 - (1 - t) ** 2;
+          ctx.globalAlpha = 1 - ease;
+          ctx.beginPath();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = WARM;
+          ctx.lineWidth = 2;
+          ctx.moveTo(bx, by);
+          ctx.lineTo(prevX, prevY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // Old dot + label
+          ctx.beginPath();
+          ctx.arc(prevX, prevY, 5, 0, Math.PI * 2);
+          ctx.fillStyle = WARM;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        } else {
+          // Phase 2: grow new line
+          const growElapsed = hasPrev ? elapsed - fadeOutDuration : elapsed;
+          const t = Math.min(growElapsed / growDuration, 1);
+          const ease = 1 - (1 - t) ** 3;
+
+          const curX = bx + (dx - bx) * ease;
+          const curY = by + (dy - by) * ease;
+
+          ctx.beginPath();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = WARM;
+          ctx.lineWidth = 2;
+          ctx.moveTo(bx, by);
+          ctx.lineTo(curX, curY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // City dot + label fade in
+          ctx.globalAlpha = ease;
+          ctx.beginPath();
+          ctx.arc(dx, dy, 5, 0, Math.PI * 2);
+          ctx.fillStyle = WARM;
+          ctx.fill();
+          ctx.font = '600 12px -apple-system, system-ui, sans-serif';
+          ctx.fillStyle = WARM;
+          ctx.textAlign = 'center';
+          ctx.fillText(capital.name, dx, dy + 20);
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.restore();
+
+        if (elapsed < totalDuration) {
+          flightAnimId = requestAnimationFrame(frame);
+        } else {
+          prevCapitalCoord = [dx, dy];
+        }
+      }
+
+      flightAnimId = requestAnimationFrame(frame);
     }
 
     const planePlugin = {

@@ -46,7 +46,7 @@ Merged both cities into a single horizon table (13 columns, daily granularity). 
 
 **H1 was rejected** — Bergen averages 5.1°C colder than Paris, not 3°C. Only 25% of days are within the threshold.
 
-But this rejection was the most interesting finding. The Analyse→Define loop kicked in: the real story wasn't "they're the same temperature" but "Bergen's winters are surprisingly mild for Scandinavia." The gap is just 4°C in winter, and some individual months Bergen was actually warmer than Paris.
+But that 5°C number turned out to be the most interesting finding. It wasn't as far from the hypothesised 3°C as it might sound, and it hid a seasonal story: the gap shrinks to just 4°C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6°C in summer. This triggered an Analyse→Define loop — the original intuition of "similar temperatures" was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a *feature* — Bergen avoids Paris's heatwaves entirely.
 
 **H2 was confirmed** — r=0.81 daily correlation, r=0.94 monthly. They ride the same European weather systems.
 
