@@ -23,9 +23,9 @@ if (base === '') {
 }
 
 const pages = [
-  { content: 'content/en/index.md', template: 'templates/index.html', output: 'dist/index.html', lang: 'en' },
+  { content: 'content/en/index.md', template: 'templates/index.html', output: 'dist/en/index.html', lang: 'en' },
   { content: 'content/fr/index.md', template: 'templates/index.html', output: 'dist/fr/index.html', lang: 'fr' },
-  { content: 'content/en/about.md', template: 'templates/about.html', output: 'dist/about.html', lang: 'en' },
+  { content: 'content/en/about.md', template: 'templates/about.html', output: 'dist/en/about.html', lang: 'en' },
   { content: 'content/fr/about.md', template: 'templates/about.html', output: 'dist/fr/about.html', lang: 'fr' },
 ];
 
@@ -111,13 +111,13 @@ function buildLangToggle(lang, isAbout) {
 
   let enHref, frHref, aboutHref;
   if (isAbout) {
-    enHref = `${base}/about.html`;
+    enHref = `${base}/en/about.html`;
     frHref = `${base}/fr/about.html`;
     aboutHref = null; // already on about
   } else {
-    enHref = `${base}/`;
+    enHref = `${base}/en/`;
     frHref = `${base}/fr/`;
-    aboutHref = lang === 'fr' ? `${base}/fr/about.html` : `${base}/about.html`;
+    aboutHref = lang === 'fr' ? `${base}/fr/about.html` : `${base}/en/about.html`;
   }
 
   let html = '';
@@ -314,6 +314,11 @@ for (const page of pages) {
   console.log(`  built: ${page.output}`);
   built++;
 }
+
+// Write root redirect to /en/
+const redirectHtml = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${base}/en/"><link rel="canonical" href="${base}/en/"></head></html>`;
+fs.writeFileSync(path.resolve('dist', 'index.html'), redirectHtml);
+console.log('  built: dist/index.html (redirect → /en/)');
 
 // Copy data files
 const dataSrc = path.resolve('site', 'data');
