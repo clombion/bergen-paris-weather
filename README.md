@@ -56,16 +56,9 @@ An additional threshold sensitivity lesson: Bergen "has snow 20% of days" using 
 
 ### Present
 
-Built an interactive bilingual (EN/FR) website with:
-- Lollipop chart comparing monthly temperatures
-- Year×month heatmap with filter controls
-- Daily temperature time series with year slider
-- Heatwave comparison scatter plot with thermal comfort zone
-- Snow day analysis with Tromsø comparison
-- Interactive flight distance map with European capital selector
-- Parallax background map, snowfall animation, animated stat counters
+The goal was to help dispel a common misconception — especially among French people — that Norway is a country defined by snow and extreme cold. The site is designed as a narrative that progressively challenges that assumption: winters are milder than expected, snow days are barely below freezing, summers avoid heatwaves, and the "frozen Norway" people picture is actually Tromsø, over 1,200 km from Bergen.
 
-Auto-detects French users via `navigator.language`.
+The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception. An interactive flight distance map lets visitors compare Bergen–Tromsø with Bergen to their own European capital, making the "Norway is a long country" point personal and concrete.
 
 ## Pipeline scripts
 
