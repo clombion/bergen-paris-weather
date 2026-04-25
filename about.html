@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Bergen vs Paris</title>
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --card: #ffffff;
+      --border: #e5e5e0;
+      --highlight: #f0ede4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .back {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 40px;
+    }
+
+    .back:hover { color: var(--text); }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-top: 40px;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 6px;
+      font-family: -apple-system, system-ui, sans-serif;
+    }
+
+    p { margin-bottom: 16px; }
+
+    ul, ol {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    li { margin-bottom: 6px; }
+
+    strong { font-weight: 600; }
+
+    a { color: var(--text); }
+
+    .findings {
+      list-style: none;
+      padding: 0;
+    }
+
+    .findings li {
+      padding-left: 20px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .findings li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 6px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.88em;
+      background: var(--highlight);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    pre {
+      background: var(--highlight);
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .highlight-box {
+      background: var(--highlight);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-size: 0.98rem;
+    }
+
+    .footer {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      .container { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back">&larr; Back to the site</a>
+
+    <h1>Bergen vs Paris Weather Comparison</h1>
+    <p class="intro">
+      This project compares 10 years of daily weather data (2016&ndash;2025) between Bergen, Norway and Paris, France.
+    </p>
+
+    <ul class="findings">
+      <li>Bergen is on average 5&deg;C colder than Paris, but the gap shrinks to ~4&deg;C in winter</li>
+      <li>Daily temperatures are 81% correlated &mdash; when one city gets colder, so does the other</li>
+      <li>Bergen's snow days average 1.5&deg;C &mdash; almost eight in ten are above freezing</li>
+      <li>Bergen is geographically closer to the French Riviera than to Arctic Norway</li>
+      <li>When Paris bakes above 30&deg;C (114 days over the decade), Bergen averages a comfortable 18&deg;C</li>
+    </ul>
+
+    <h2>Explore the data</h2>
+    <div style="margin:16px 0">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem">
+        <input type="text" id="dataSearch" placeholder="Filter by date, e.g. 2022-01" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:inherit;width:200px">
+        <label style="color:var(--muted);display:flex;align-items:center;gap:4px">
+          <input type="checkbox" id="snowOnly"> Snow days only
+        </label>
+        <span id="rowCount" style="color:var(--muted)"></span>
+      </div>
+      <div style="max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;background:var(--card)">
+        <table id="dataTable" style="margin:0;width:100%">
+          <thead id="dataHead" style="position:sticky;top:0;background:var(--card)"></thead>
+          <tbody id="dataBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+    const COLUMNS = [
+      { key: 'date', label: 'Date' },
+      { key: 'bergen_mean', label: 'Bergen mean' },
+      { key: 'paris_mean', label: 'Paris mean' },
+      { key: 'bergen_min', label: 'Bergen min' },
+      { key: 'bergen_max', label: 'Bergen max' },
+      { key: 'paris_min', label: 'Paris min' },
+      { key: 'paris_max', label: 'Paris max' },
+      { key: 'bergen_snow', label: 'Bergen snow mm' },
+      { key: 'paris_snow', label: 'Paris snow mm' },
+      { key: 'bergen_sun', label: 'Bergen sun h' },
+      { key: 'paris_sun', label: 'Paris sun h' },
+    ];
+
+    let allRows = [];
+    let sortCol = 'date';
+    let sortAsc = true;
+
+    async function loadTable() {
+      const data = await fetch('site/data/daily.json').then(r => r.json());
+      const n = data.dates.length;
+      for (let i = 0; i < n; i++) {
+        allRows.push({
+          date: data.dates[i],
+          bergen_mean: data.bergen_mean[i],
+          paris_mean: data.paris_mean[i],
+          bergen_min: data.bergen_min[i],
+          bergen_max: data.bergen_max[i],
+          paris_min: data.paris_min[i],
+          paris_max: data.paris_max[i],
+          bergen_snow: data.bergen_snow[i],
+          paris_snow: data.paris_snow[i],
+          bergen_sun: +(data.bergen_sun[i]).toFixed(1),
+          paris_sun: +(data.paris_sun[i]).toFixed(1),
+        });
+      }
+
+      // Build header
+      const thead = document.getElementById('dataHead');
+      thead.innerHTML = '<tr>' + COLUMNS.map(c =>
+        `<th style="cursor:pointer;white-space:nowrap;user-select:none" data-col="${c.key}">${c.label} <span class="sort-arrow"></span></th>`
+      ).join('') + '</tr>';
+
+      thead.querySelectorAll('th').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.dataset.col;
+          if (sortCol === col) sortAsc = !sortAsc;
+          else { sortCol = col; sortAsc = true; }
+          renderRows();
+        });
+      });
+
+      document.getElementById('dataSearch').addEventListener('input', renderRows);
+      document.getElementById('snowOnly').addEventListener('change', renderRows);
+
+      renderRows();
+    }
+
+    function renderRows() {
+      const filter = document.getElementById('dataSearch').value.trim().toLowerCase();
+      const snowOnly = document.getElementById('snowOnly').checked;
+
+      let rows = allRows;
+      if (filter) rows = rows.filter(r => r.date.includes(filter));
+      if (snowOnly) rows = rows.filter(r => r.bergen_snow >= 5);
+
+      rows = [...rows].sort((a, b) => {
+        const va = a[sortCol], vb = b[sortCol];
+        const cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb;
+        return sortAsc ? cmp : -cmp;
+      });
+
+      // Update sort arrows
+      document.querySelectorAll('#dataHead th').forEach(th => {
+        const arrow = th.querySelector('.sort-arrow');
+        if (th.dataset.col === sortCol) {
+          arrow.textContent = sortAsc ? ' \u25B2' : ' \u25BC';
+        } else {
+          arrow.textContent = '';
+        }
+      });
+
+      const tbody = document.getElementById('dataBody');
+      // Render in chunks for performance
+      const show = rows.slice(0, 500);
+      tbody.innerHTML = show.map(r =>
+        '<tr>' + COLUMNS.map(c => {
+          const v = r[c.key];
+          const formatted = c.key === 'date' ? v : (typeof v === 'number' ? v.toFixed(1) : v);
+          return `<td>${formatted}</td>`;
+        }).join('') + '</tr>'
+      ).join('');
+
+      const countEl = document.getElementById('rowCount');
+      countEl.textContent = rows.length === allRows.length
+        ? `${rows.length} days`
+        : `${rows.length} / ${allRows.length} days`;
+    }
+
+    loadTable();
+    </script>
+
+    <h2>The process</h2>
+    <p>
+      This project follows the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a> methodology: Define, Find, Get, Verify, Clean, Analyse, Present.
+    </p>
+
+    <h3>Define</h3>
+    <p>
+      Started with a personal intuition: &ldquo;Bergen and Paris weather are similar.&rdquo; We broke this into four testable hypotheses:
+    </p>
+    <ol>
+      <li><strong>H1</strong>: Daily mean temperatures are within 3&deg;C of each other</li>
+      <li><strong>H2</strong>: Temperature changes correlate &mdash; when one city cools, so does the other</li>
+      <li><strong>H3</strong>: Snow events co-occur more than chance would predict</li>
+      <li><strong>H4</strong>: Sunny days co-occur more than chance would predict</li>
+    </ol>
+
+    <h3>Find</h3>
+    <p>
+      Surveyed six data sources (Open-Meteo, Meteostat, Frost API, M&eacute;t&eacute;o-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.
+    </p>
+
+    <h3>Get</h3>
+    <p>
+      Fetched 3,653 days of daily data per city from the <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.
+    </p>
+
+    <h3>Verify</h3>
+    <ul>
+      <li><strong>Completeness</strong>: continuous date sequences, no missing values</li>
+      <li><strong>Quality</strong>: no temperatures outside plausible climate records, no negative precipitation, no suspicious flat-line periods</li>
+      <li><strong>Cross-check</strong>: compared ERA5 vs ECMWF IFS models. Paris data agrees within 1&deg;C on 94% of days. Bergen shows ~1.6&deg;C model uncertainty &mdash; noted but not disqualifying</li>
+    </ul>
+
+    <h3>Clean</h3>
+    <p>
+      Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max &gt;35&deg;C, Bergen min &lt;&minus;10&deg;C) but a sensitivity check showed removing them changed results by &lt;0.5&deg;C, so we dropped the filtering.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>date</th><th>bergen_temp_mean</th><th>paris_temp_mean</th><th>bergen_snowfall_mm</th><th>bergen_sunshine_hours</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2016-01-01</td><td>3.6</td><td>6.5</td><td>18.2</td><td>3.64</td></tr>
+        <tr><td>2016-01-02</td><td>0.7</td><td>9.0</td><td>0.0</td><td>1.51</td></tr>
+        <tr><td>2016-01-03</td><td>&minus;2.7</td><td>6.9</td><td>0.0</td><td>5.18</td></tr>
+      </tbody>
+    </table>
+    <p style="font-family:-apple-system,system-ui,sans-serif;font-size:0.82rem;color:var(--muted)">
+      Full table: 3,653 rows &times; 13 columns &mdash; <a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv" style="color:var(--muted)">horizon.csv</a>
+    </p>
+
+    <h3>Analyse</h3>
+    <p>
+      <strong>H1 was rejected</strong> &mdash; Bergen averages 5.1&deg;C colder than Paris, not 3&deg;C. Only 25% of days are within the threshold.
+    </p>
+    <div class="highlight-box">
+      But that 5&deg;C number turned out to be the most interesting finding. It wasn&rsquo;t as far from the hypothesised 3&deg;C as it might sound, and it hid a seasonal story: the gap shrinks to just 4&deg;C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6&deg;C in summer. This triggered an Analyse&rarr;Define loop &mdash; the original intuition of &ldquo;similar temperatures&rdquo; was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a <em>feature</em> &mdash; Bergen avoids Paris&rsquo;s heatwaves entirely.
+    </div>
+    <p>
+      <strong>H2 was confirmed</strong> &mdash; r=0.81 daily correlation, r=0.94 monthly. They ride the same European weather systems.
+    </p>
+    <p>
+      <strong>H3 and H4 were weakly confirmed</strong> &mdash; snow co-occurs 2.6&times; more than chance, sunny days 1.4&times;.
+    </p>
+    <p>
+      An additional threshold sensitivity lesson: Bergen &ldquo;has snow 20% of days&rdquo; using the raw model data (any snowfall &gt;0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold (&ldquo;noticeable snow&rdquo;) gives 14% &mdash; which matched lived experience much better.
+    </p>
+
+    <h3>Present</h3>
+    <p>
+      The goal was to help dispel a common misconception &mdash; especially among French people &mdash; that Norway is a country defined by snow and extreme cold. The site is structured in two parts: the <em>what</em> and the <em>why</em>.
+    </p>
+    <p>
+      The <strong>what</strong> explores the temperature comparison through both objective and subjective angles. The objective angle looks at the raw data: monthly averages, daily correlations, year-by-year heatmaps. The subjective angle reframes the gap as a lived experience: Bergen&rsquo;s snow days are warmer than you&rsquo;d think, and its summers sit in the thermal comfort zone while Paris overshoots into heatwave territory.
+    </p>
+    <p>
+      The <strong>why</strong> explores geography &mdash; the distances between Bergen, Paris, and Troms&oslash; &mdash; to explain why Bergen&rsquo;s climate is so different from the Arctic Norway people imagine. The Gulf Stream and Norway&rsquo;s sheer length are the key factors.
+    </p>
+    <p>
+      Many charts include a small interactive component to keep them engaging: filtering the heatmap by similarity level, scrubbing through years on the daily chart, or choosing a European capital on the flight distance map to make the &ldquo;Norway is a long country&rdquo; point personal and relatable.
+    </p>
+    <p>
+      The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
+    </p>
+
+    <h2>Pipeline scripts</h2>
+    <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo
+verify_data.py                          # Sanity checks + cross-validation
+clean_data.py     &rarr; data/clean/         # Merge and standardise
+analyse.py                              # Test hypotheses
+export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
+
+    <h2>Data</h2>
+    <p>
+      Source: <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data. Snow days defined as days with 5mm+ snowfall.
+    </p>
+
+    <div class="footer">
+      <p>
+        A project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted)">C&eacute;dric Lombion</a>.
+        Data: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a> (CC BY 4.0). Code: MIT.
+        <a href="https://github.com/clombion/bergen-paris-weather" style="color:var(--muted)">GitHub</a>.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

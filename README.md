@@ -66,9 +66,15 @@ An additional threshold sensitivity lesson: Bergen "has snow 20% of days" using 
 
 ### Present
 
-The goal was to help dispel a common misconception — especially among French people — that Norway is a country defined by snow and extreme cold. The site is designed as a narrative that progressively challenges that assumption: winters are milder than expected, snow days are barely below freezing, summers avoid heatwaves, and the "frozen Norway" people picture is actually Tromsø, over 1,200 km from Bergen.
+The goal was to help dispel a common misconception — especially among French people — that Norway is a country defined by snow and extreme cold. The site is structured in two parts: the *what* and the *why*.
 
-The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception. An interactive flight distance map lets visitors compare Bergen–Tromsø with Bergen to their own European capital, making the "Norway is a long country" point personal and concrete.
+The **what** explores the temperature comparison through both objective and subjective angles. The objective angle looks at the raw data: monthly averages, daily correlations, year-by-year heatmaps. The subjective angle reframes the gap as a lived experience: Bergen's snow days are warmer than you'd think, and its summers sit in the thermal comfort zone while Paris overshoots into heatwave territory.
+
+The **why** explores geography — the distances between Bergen, Paris, and Tromsø — to explain why Bergen's climate is so different from the Arctic Norway people imagine. The Gulf Stream and Norway's sheer length are the key factors.
+
+Many charts include a small interactive component to keep them engaging: filtering the heatmap by similarity level, scrubbing through years on the daily chart, or choosing a European capital on the flight distance map to make the "Norway is a long country" point personal and relatable.
+
+The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
 
 ## Pipeline scripts
 

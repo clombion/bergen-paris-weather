@@ -342,6 +342,19 @@
       user-select: none;
     }
 
+    .about-link {
+      padding: 4px 12px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      border-left: 1px solid var(--bg);
+      margin-left: 2px;
+    }
+
+    .about-link:hover {
+      color: var(--text);
+    }
+
     .lang-toggle span.active {
       background: var(--card);
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -423,6 +436,7 @@
   <div class="lang-toggle" id="langToggle">
     <span class="active" data-lang="en">EN</span>
     <span data-lang="fr">FR</span>
+    <a href="about.html" class="about-link" data-i18n-attr="about">About</a>
   </div>
 
   <canvas id="mapBg" class="map-bg"></canvas>
