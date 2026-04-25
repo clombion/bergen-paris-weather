@@ -484,6 +484,21 @@
       </div>
     </section>
 
+    <!-- Summer comfort -->
+    <section>
+      <h2 data-i18n="comfort_title">When does Bergen actually feel better?</h2>
+      <p class="lead" data-i18n="comfort_lead">
+        A lower temperature is a disadvantage in winter — but in summer,
+        it's a gift. Each point below is a day Paris exceeded 30°C.
+        The green zone shows the comfortable range. Bergen stays in it —
+        Paris doesn't.
+      </p>
+      <div class="chart-wrap">
+        <canvas id="comfortChart" height="320"></canvas>
+      </div>
+      <div class="stat-grid" id="comfortStats"></div>
+    </section>
+
     <!-- Daily co-movement -->
     <section>
       <h2 data-i18n="comovement_title">They move together</h2>
@@ -586,6 +601,12 @@
         stat_avg: 'Average gap year-round',
         heatmap_title: 'A decade, month by month',
         heatmap_lead: 'Each cell shows how much colder Bergen was than Paris. The lighter the cell, the closer they were. Blue means Bergen was warmer.',
+        comfort_title: 'When does Bergen actually feel better?',
+        comfort_lead: 'A lower temperature is a disadvantage in winter — but in summer, it\'s a gift. Each point below is a day Paris exceeded 30°C. The green zone shows the <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1" target="_blank" rel="noopener" style="color:var(--muted)">thermal comfort range</a> (20–25°C). Bergen stays in it — Paris doesn\'t.',
+        stat_paris_above30: 'Paris days above 30°C',
+        stat_bergen_above30: 'Bergen days above 30°C',
+        stat_bergen_avg_when_paris_hot: 'Bergen avg when Paris >30°C',
+        stat_comfort_pct: 'Summer days Bergen is cooler',
         filter_all: 'All',
         filter_close: 'Similar',
         filter_typical: 'Average',
@@ -626,6 +647,12 @@
         stat_avg: 'Écart moyen annuel',
         heatmap_title: 'Une décennie, mois par mois',
         heatmap_lead: 'Chaque cellule indique de combien Bergen était plus froide que Paris. Plus la cellule est claire, plus les températures étaient proches. Une cellule bleue signifie que Bergen était plus chaude.',
+        comfort_title: 'Quand fait-il meilleur à Bergen qu\'à Paris ?',
+        comfort_lead: 'Une température plus basse est un désavantage en hiver — mais en été, c\'est un cadeau. Chaque point ci-dessous représente un jour où Paris a dépassé 30°C. La zone verte indique la <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1" target="_blank" rel="noopener" style="color:var(--muted)">zone de confort thermique</a> (20–25°C). Bergen y reste — pas Paris.',
+        stat_paris_above30: 'Jours à Paris au-dessus de 30°C',
+        stat_bergen_above30: 'Jours à Bergen au-dessus de 30°C',
+        stat_bergen_avg_when_paris_hot: 'Bergen moy. quand Paris >30°C',
+        stat_comfort_pct: 'Jours d\'été où Bergen est plus frais',
         filter_all: 'Tout',
         filter_close: 'Proches',
         filter_typical: 'Moyens',
@@ -725,10 +752,10 @@
 
     async function loadData() {
       [dailyData, monthlyData, yearMonthData, surprisesData] = await Promise.all([
-        fetch('data/daily.json').then(r => r.json()),
-        fetch('data/monthly.json').then(r => r.json()),
-        fetch('data/year_month.json').then(r => r.json()),
-        fetch('data/surprises.json').then(r => r.json()),
+        fetch('site/data/daily.json').then(r => r.json()),
+        fetch('site/data/monthly.json').then(r => r.json()),
+        fetch('site/data/year_month.json').then(r => r.json()),
+        fetch('site/data/surprises.json').then(r => r.json()),
       ]);
       render();
     }
@@ -818,11 +845,118 @@
       document.getElementById('snowGapStats').innerHTML =
         statCard(gapParis + '°C', 'stat_snow_paris', 'var(--paris)') +
         statCard('6.6°C', 'stat_snow_tromso', '#7bafd4');
+
+      // Summer comfort stats
+      const summerMonths = [6, 7, 8];
+      const summerIdx = [];
+      for (let i = 0; i < n; i++) {
+        if (summerMonths.includes(parseInt(dates[i].split('-')[1]))) summerIdx.push(i);
+      }
+      const parisMax = dailyData.paris_max || dailyData.paris_mean;
+      const bergenMax = dailyData.bergen_max || dailyData.bergen_mean;
+      const parisAbove30 = summerIdx.filter(i => parisMax[i] >= 30).length;
+      const bergenAbove30 = summerIdx.filter(i => bergenMax[i] >= 30).length;
+      const parisHotIdx = summerIdx.filter(i => parisMax[i] >= 30);
+      const bergenWhenHot = parisHotIdx.length
+        ? (parisHotIdx.reduce((s, i) => s + bergenMax[i], 0) / parisHotIdx.length).toFixed(0)
+        : '—';
+      const comfortDays = Math.round(summerIdx.filter(i => bergenMax[i] < 25 && parisMax[i] > 25).length / summerIdx.length * 100);
+
+      document.getElementById('comfortStats').innerHTML =
+        statCard(parisAbove30, 'stat_paris_above30', 'var(--paris)') +
+        statCard(bergenAbove30, 'stat_bergen_above30', 'var(--bergen)') +
+        statCard(bergenWhenHot + '°C', 'stat_bergen_avg_when_paris_hot', 'var(--bergen)') +
+        statCard(comfortDays + '%', 'stat_comfort_pct');
+    }
+
+    function renderComfortChart() {
+      // Find all days Paris max >= 30, sorted by Paris temp
+      const heatDays = [];
+      for (let i = 0; i < dailyData.dates.length; i++) {
+        if (dailyData.paris_max[i] >= 30) {
+          heatDays.push({
+            date: dailyData.dates[i],
+            paris: dailyData.paris_max[i],
+            bergen: dailyData.bergen_max[i],
+          });
+        }
+      }
+      const n = heatDays.length;
+
+      // Comfort zone plugin — draw band behind data
+      const comfortZonePlugin = {
+        id: 'comfortZone',
+        beforeDatasetsDraw(chart) {
+          const { ctx, chartArea, scales } = chart;
+          const yTop = scales.y.getPixelForValue(25);
+          const yBottom = scales.y.getPixelForValue(20);
+          ctx.save();
+          ctx.fillStyle = 'rgba(100, 180, 100, 0.12)';
+          ctx.fillRect(chartArea.left, yTop, chartArea.width, yBottom - yTop);
+          // Label
+          ctx.font = '600 10px -apple-system, system-ui, sans-serif';
+          ctx.fillStyle = 'rgba(100, 160, 100, 0.5)';
+          ctx.textAlign = 'right';
+          ctx.fillText('20–25°C', chartArea.right - 6, yBottom - 4);
+          ctx.restore();
+        }
+      };
+
+      new Chart(document.getElementById('comfortChart'), {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Paris',
+              data: heatDays.map(d => ({ x: d.date, y: d.paris })),
+              backgroundColor: PARIS + '90',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+            {
+              label: 'Bergen',
+              data: heatDays.map(d => ({ x: d.date, y: d.bergen })),
+              backgroundColor: BERGEN + '90',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}°C`,
+              }
+            }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: '°C max' },
+              grid: { color: '#e5e5e0' },
+              min: 5,
+            },
+            x: {
+              type: 'time',
+              time: {
+                unit: 'year',
+                tooltipFormat: 'dd MMM yyyy',
+              },
+              title: { display: true, text: currentLang === 'fr' ? `${n} jours de canicule à Paris (>30°C)` : `${n} Paris heatwave days (>30°C)` },
+              grid: { display: false },
+            },
+          },
+        },
+        plugins: [comfortZonePlugin],
+      });
     }
 
     function render() {
       computeStats();
       observeNumbers();
+      renderComfortChart();
       renderMonthlyChart();
       renderHeatmap();
       renderDailyChart(2025);
