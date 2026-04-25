@@ -267,6 +267,13 @@
       .page-layout { display: block; }
     }
 
+    #langToggle span.active {
+      background: var(--card);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-weight: 600;
+      color: var(--text);
+    }
+
     @media (max-width: 600px) {
       h1 { font-size: 1.6rem; }
       .container { padding: 40px 20px 60px; }
@@ -274,12 +281,17 @@
   </style>
 </head>
 <body>
+  <div class="lang-toggle" id="langToggle" style="position:fixed;top:16px;right:16px;z-index:10;font-family:-apple-system,system-ui,sans-serif;font-size:0.82rem;display:flex;background:var(--border);border-radius:16px;padding:2px;cursor:pointer">
+    <span style="padding:4px 12px;border-radius:14px;transition:all 0.25s ease;user-select:none" class="active" data-lang="en">EN</span>
+    <span style="padding:4px 12px;border-radius:14px;transition:all 0.25s ease;user-select:none" data-lang="fr">FR</span>
+  </div>
+
   <div class="page-layout">
 
   <nav class="toc" id="toc">
-    <a href="#top" class="active">Introduction</a>
-    <a href="#explore" class="active">Explore the data</a>
-    <a href="#process">The process</a>
+    <a href="#top" class="active" data-i18n="toc_intro">Introduction</a>
+    <a href="#explore" data-i18n="toc_explore">Explore the data</a>
+    <a href="#process" data-i18n="toc_process">The process</a>
     <a href="#define" class="sub">Define</a>
     <a href="#find" class="sub">Find</a>
     <a href="#get" class="sub">Get</a>
@@ -287,19 +299,19 @@
     <a href="#clean" class="sub">Clean</a>
     <a href="#analyse" class="sub">Analyse</a>
     <a href="#present" class="sub">Present</a>
-    <a href="#tooling">Tooling</a>
-    <a href="#sources">Sources</a>
+    <a href="#tooling" data-i18n="toc_tooling">Tooling</a>
+    <a href="#sources" data-i18n="toc_sources">Sources</a>
   </nav>
 
   <div class="container">
-    <a href="index.html" class="back">&larr; Back to the site</a>
+    <a href="index.html" class="back" data-i18n="back">&larr; Back to the site</a>
 
-    <h1 id="top">Bergen vs Paris Weather Comparison</h1>
-    <p class="intro">
+    <h1 id="top" data-i18n="title">Bergen vs Paris Weather Comparison</h1>
+    <p class="intro" data-i18n="intro">
       This project compares 10 years of daily weather data (2016&ndash;2025) between Bergen, Norway and Paris, France.
     </p>
 
-    <ul class="findings">
+    <ul class="findings" data-i18n="findings">
       <li>Bergen is on average 5&deg;C colder than Paris, but the gap shrinks to ~4&deg;C in winter</li>
       <li>Daily temperatures are 81% correlated &mdash; when one city gets colder, so does the other</li>
       <li>Bergen's snow days average 1.5&deg;C &mdash; almost eight in ten are above freezing</li>
@@ -307,12 +319,12 @@
       <li>When Paris bakes above 30&deg;C (114 days over the decade), Bergen averages a comfortable 18&deg;C</li>
     </ul>
 
-    <h2 id="explore">Explore the data</h2>
+    <h2 id="explore" data-i18n="h_explore">Explore the data</h2>
     <div style="margin:16px 0">
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem">
         <input type="text" id="dataSearch" placeholder="Filter by date, e.g. 2022-01" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:inherit;width:200px">
         <label style="color:var(--muted);display:flex;align-items:center;gap:4px">
-          <input type="checkbox" id="snowOnly"> Snow days only
+          <input type="checkbox" id="snowOnly"> <span data-i18n="snow_only">Snow days only</span>
         </label>
         <span id="rowCount" style="color:var(--muted)"></span>
       </div>
@@ -427,16 +439,16 @@
     loadTable();
     </script>
 
-    <h2 id="process">The process</h2>
-    <p>
+    <h2 id="process" data-i18n="h_process">The process</h2>
+    <p data-i18n="process_intro">
       This project follows the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a> methodology: Define, Find, Get, Verify, Clean, Analyse, Present.
     </p>
 
     <h3 id="define">Define</h3>
-    <p>
+    <p data-i18n="define_p">
       Started with a personal intuition: &ldquo;Bergen and Paris weather are similar.&rdquo; We broke this into four testable hypotheses:
     </p>
-    <ol>
+    <ol data-i18n="define_list">
       <li><strong>H1</strong>: Daily mean temperatures are within 3&deg;C of each other</li>
       <li><strong>H2</strong>: Temperature changes correlate &mdash; when one city cools, so does the other</li>
       <li><strong>H3</strong>: Snow events co-occur more than chance would predict</li>
@@ -448,7 +460,7 @@
       <span>Method: desk research</span>
       <span>Sources compared: 6</span>
     </div>
-    <p>
+    <p data-i18n="find_p">
       Surveyed six data sources (Open-Meteo, Meteostat, Frost API, M&eacute;t&eacute;o-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.
     </p>
 
@@ -457,7 +469,7 @@
       <span>Tool: Python (<code>fetch_data.py</code>)</span>
       <span>API: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a></span>
     </div>
-    <p>
+    <p data-i18n="get_p">
       Fetched 3,653 days of daily data per city from the <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.
     </p>
 
@@ -466,7 +478,7 @@
       <span>Tool: Python (<code>verify_data.py</code>)</span>
       <span>Cross-check: ERA5 vs ECMWF IFS models</span>
     </div>
-    <ul>
+    <ul data-i18n="verify_list">
       <li><strong>Completeness</strong>: continuous date sequences, no missing values</li>
       <li><strong>Quality</strong>: no temperatures outside plausible climate records, no negative precipitation, no suspicious flat-line periods</li>
       <li><strong>Cross-check</strong>: compared ERA5 vs ECMWF IFS models. Paris data agrees within 1&deg;C on 94% of days. Bergen shows ~1.6&deg;C model uncertainty &mdash; noted but not disqualifying</li>
@@ -477,7 +489,7 @@
       <span>Tool: Python (<code>clean_data.py</code>)</span>
       <span>Output: <code>data/clean/horizon.csv</code></span>
     </div>
-    <p>
+    <p data-i18n="clean_p">
       Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max &gt;35&deg;C, Bergen min &lt;&minus;10&deg;C) but a sensitivity check showed removing them changed results by &lt;0.5&deg;C, so we dropped the filtering.
     </p>
 
@@ -487,10 +499,11 @@
       <span>Tool: Python (<code>analyse.py</code>)</span>
       <span>Methods: descriptive statistics, Pearson correlation, co-occurrence analysis</span>
     </div>
-    <p>
+    <p data-i18n="analyse_intro">
       The analysis tested each hypothesis using simple statistical methods: daily temperature differences and their distributions (H1), Pearson correlation with lag analysis (H2), and co-occurrence rates compared to chance baselines (H3, H4). No modelling or machine learning &mdash; the dataset is clean and the questions are straightforward enough for descriptive and inferential statistics.
     </p>
 
+    <div data-i18n="hypothesis_table">
     <table>
       <thead>
         <tr><th></th><th>Claim</th><th>Finding</th><th>Conclusion</th></tr>
@@ -522,12 +535,13 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
-    <div class="highlight-box">
+    <div class="highlight-box" data-i18n="analyse_callout">
       The H1 rejection turned out to be the most interesting finding. The 5&deg;C gap hid a seasonal story: it shrinks to just 4&deg;C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6&deg;C in summer. This triggered an Analyse&rarr;Define loop &mdash; the original intuition of &ldquo;similar temperatures&rdquo; was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a <em>feature</em> &mdash; Bergen avoids Paris&rsquo;s heatwaves entirely.
     </div>
 
-    <p>
+    <p data-i18n="analyse_threshold">
       An additional threshold sensitivity lesson: Bergen &ldquo;has snow 20% of days&rdquo; using the raw model data (any snowfall &gt;0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold (&ldquo;noticeable snow&rdquo;) gives 14% &mdash; which matched lived experience much better.
     </p>
 
@@ -538,55 +552,55 @@
       <span>Maps: <a href="https://github.com/topojson/topojson-client" style="color:var(--muted)">TopoJSON</a> + Canvas</span>
       <span>Data export: Python (<code>export_for_web.py</code>)</span>
     </div>
-    <p>
+    <p data-i18n="present_p1">
       The goal was to help dispel a common misconception &mdash; especially among French people &mdash; that Norway is a country defined by snow and extreme cold. The site is structured in two parts: the <em>what</em> and the <em>why</em>.
     </p>
-    <p>
+    <p data-i18n="present_p2">
       The <strong>what</strong> explores the temperature comparison through both objective and subjective angles. The objective angle looks at the raw data: monthly averages, daily correlations, year-by-year heatmaps. The subjective angle reframes the gap as a lived experience: Bergen&rsquo;s snow days are warmer than you&rsquo;d think, and its summers sit in the thermal comfort zone while Paris overshoots into heatwave territory.
     </p>
-    <p>
+    <p data-i18n="present_p3">
       The <strong>why</strong> explores geography &mdash; the distances between Bergen, Paris, and Troms&oslash; &mdash; to explain why Bergen&rsquo;s climate is so different from the Arctic Norway people imagine. The Gulf Stream and Norway&rsquo;s sheer length are the key factors.
     </p>
-    <p>
+    <p data-i18n="present_p4">
       Many charts include a small interactive component to keep them engaging: filtering the heatmap by similarity level, scrubbing through years on the daily chart, or choosing a European capital on the flight distance map to make the &ldquo;Norway is a long country&rdquo; point personal and relatable.
     </p>
-    <p>
+    <p data-i18n="present_p5">
       The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.
     </p>
 
-    <h2 id="tooling">Tooling summary</h2>
-    <p>
+    <h2 id="tooling" data-i18n="h_tooling">Tooling summary</h2>
+    <p data-i18n="tooling_intro">
       The technical implementation was built with Claude Code, following a guardrail-first methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the framework that guided each step.
     </p>
-    <p><strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:</p>
-    <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API
+    <p data-i18n="tooling_pipeline"><strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:</p>
+    <pre data-i18n="tooling_pre">fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API
 verify_data.py                          # Sanity checks + cross-validation
 clean_data.py     &rarr; data/clean/         # Merge and standardise
 analyse.py                              # Test hypotheses
 export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
-    <p><strong>Website</strong> &mdash; a single-page static site with no build step:</p>
-    <ul>
+    <p data-i18n="tooling_website"><strong>Website</strong> &mdash; a single-page static site with no build step:</p>
+    <ul data-i18n="tooling_website_list">
       <li><a href="https://www.chartjs.org/">Chart.js</a> for interactive charts (lollipop, time series, scatter, bar)</li>
       <li><a href="https://github.com/topojson/topojson-client">TopoJSON</a> + HTML Canvas for the background map and flight distance map</li>
       <li><a href="https://cdn.jsdelivr.net/npm/world-atlas@2">Natural Earth / world-atlas</a> for country boundaries (50m resolution)</li>
       <li>Vanilla JavaScript for i18n, animated transitions, and computed statistics</li>
     </ul>
-    <p><strong>Publication</strong> &mdash; hosted on GitHub Pages, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
-    <h2 id="sources">Sources</h2>
-    <p><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.</p>
-    <p><strong>Project data</strong> &mdash; the raw API responses and cleaned horizon table are stored in the repository for reproducibility:</p>
-    <ul>
+    <p data-i18n="tooling_publication"><strong>Publication</strong> &mdash; hosted on GitHub Pages, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
+    <h2 id="sources" data-i18n="h_sources">Sources</h2>
+    <p data-i18n="sources_data"><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.</p>
+    <p data-i18n="sources_project"><strong>Project data</strong> &mdash; the raw API responses and cleaned horizon table are stored in the repository for reproducibility:</p>
+    <ul data-i18n="sources_list">
       <li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/data/raw">data/raw/</a> &mdash; raw JSON from Open-Meteo (Bergen + Paris, 2016&ndash;2025)</li>
       <li><a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv">data/clean/horizon.csv</a> &mdash; the merged horizon table (3,653 rows &times; 13 columns)</li>
       <li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/site/data">site/data/</a> &mdash; pre-computed JSON subsets powering the website charts</li>
     </ul>
 
     <div style="text-align:center;margin:48px 0 16px">
-      <a href="#top" style="font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem;color:var(--muted);text-decoration:none">&uarr; Back to top</a>
+      <a href="#top" data-i18n="back_top" style="font-family:-apple-system,system-ui,sans-serif;font-size:0.85rem;color:var(--muted);text-decoration:none">&uarr; Back to top</a>
     </div>
 
     <div class="footer">
-      <p>
+      <p data-i18n="footer">
         A project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted)">C&eacute;dric Lombion</a>.
         Data: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a> (CC BY 4.0). Code: MIT.
         <a href="https://github.com/clombion/bergen-paris-weather" style="color:var(--muted)">GitHub</a>.
@@ -594,6 +608,136 @@ export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
     </div>
   </div><!-- .container -->
   </div><!-- .page-layout -->
+
+  <script>
+    // --- i18n ---
+    const I18N = {
+      en: {
+        toc_intro: 'Introduction',
+        toc_explore: 'Explore the data',
+        toc_process: 'The process',
+        toc_tooling: 'Tooling',
+        toc_sources: 'Sources',
+        back: '&larr; Back to the site',
+        title: 'Bergen vs Paris Weather Comparison',
+        intro: 'This project compares 10 years of daily weather data (2016&ndash;2025) between Bergen, Norway and Paris, France.',
+        findings: '<li>Bergen is on average 5&deg;C colder than Paris, but the gap shrinks to ~4&deg;C in winter</li><li>Daily temperatures are 81% correlated &mdash; when one city gets colder, so does the other</li><li>Bergen\'s snow days average 1.5&deg;C &mdash; almost eight in ten are above freezing</li><li>Bergen is geographically closer to the French Riviera than to Arctic Norway</li><li>When Paris bakes above 30&deg;C (114 days over the decade), Bergen averages a comfortable 18&deg;C</li>',
+        h_explore: 'Explore the data',
+        snow_only: 'Snow days only',
+        h_process: 'The process',
+        process_intro: 'This project follows the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a> methodology: Define, Find, Get, Verify, Clean, Analyse, Present.',
+        define_p: 'Started with a personal intuition: &ldquo;Bergen and Paris weather are similar.&rdquo; We broke this into four testable hypotheses:',
+        define_list: '<li><strong>H1</strong>: Daily mean temperatures are within 3&deg;C of each other</li><li><strong>H2</strong>: Temperature changes correlate &mdash; when one city cools, so does the other</li><li><strong>H3</strong>: Snow events co-occur more than chance would predict</li><li><strong>H4</strong>: Sunny days co-occur more than chance would predict</li>',
+        find_p: 'Surveyed six data sources (Open-Meteo, Meteostat, Frost API, M&eacute;t&eacute;o-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.',
+        get_p: 'Fetched 3,653 days of daily data per city from the <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.',
+        verify_list: '<li><strong>Completeness</strong>: continuous date sequences, no missing values</li><li><strong>Quality</strong>: no temperatures outside plausible climate records, no negative precipitation, no suspicious flat-line periods</li><li><strong>Cross-check</strong>: compared ERA5 vs ECMWF IFS models. Paris data agrees within 1&deg;C on 94% of days. Bergen shows ~1.6&deg;C model uncertainty &mdash; noted but not disqualifying</li>',
+        clean_p: 'Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max &gt;35&deg;C, Bergen min &lt;&minus;10&deg;C) but a sensitivity check showed removing them changed results by &lt;0.5&deg;C, so we dropped the filtering.',
+        analyse_intro: 'The analysis tested each hypothesis using simple statistical methods: daily temperature differences and their distributions (H1), Pearson correlation with lag analysis (H2), and co-occurrence rates compared to chance baselines (H3, H4). No modelling or machine learning &mdash; the dataset is clean and the questions are straightforward enough for descriptive and inferential statistics.',
+        hypothesis_table: '<table><thead><tr><th></th><th>Claim</th><th>Finding</th><th>Conclusion</th></tr></thead><tbody><tr><td><strong>H1</strong></td><td>Daily temps within 3&deg;C</td><td>Average gap is 5.1&deg;C; only 25% of days within threshold</td><td style="color:#c44e3f">Rejected</td></tr><tr><td><strong>H2</strong></td><td>Temperatures correlate day-to-day</td><td>r=0.81 daily, r=0.94 monthly</td><td style="color:#2e6ea6">Confirmed</td></tr><tr><td><strong>H3</strong></td><td>Snow events co-occur</td><td>2.6&times; more than chance</td><td style="color:#8b7ec8">Weakly confirmed</td></tr><tr><td><strong>H4</strong></td><td>Sunny days co-occur</td><td>1.4&times; more than chance</td><td style="color:#8b7ec8">Weakly confirmed</td></tr></tbody></table>',
+        analyse_callout: 'The H1 rejection turned out to be the most interesting finding. The 5&deg;C gap hid a seasonal story: it shrinks to just 4&deg;C in winter (with some months where Bergen was actually warmer than Paris) and widens to 6&deg;C in summer. This triggered an Analyse&rarr;Define loop &mdash; the original intuition of &ldquo;similar temperatures&rdquo; was probably specific to colder months, where the difference is least noticeable, and had been extrapolated to the whole year. The reframed question became: Bergen is not much colder than Paris when cold matters most (winter), and the gap in summer is actually a <em>feature</em> &mdash; Bergen avoids Paris&rsquo;s heatwaves entirely.',
+        analyse_threshold: 'An additional threshold sensitivity lesson: Bergen &ldquo;has snow 20% of days&rdquo; using the raw model data (any snowfall &gt;0mm), but that includes trace amounts from the reanalysis model. Using a 5mm+ threshold (&ldquo;noticeable snow&rdquo;) gives 14% &mdash; which matched lived experience much better.',
+        present_p1: 'The goal was to help dispel a common misconception &mdash; especially among French people &mdash; that Norway is a country defined by snow and extreme cold. The site is structured in two parts: the <em>what</em> and the <em>why</em>.',
+        present_p2: 'The <strong>what</strong> explores the temperature comparison through both objective and subjective angles. The objective angle looks at the raw data: monthly averages, daily correlations, year-by-year heatmaps. The subjective angle reframes the gap as a lived experience: Bergen&rsquo;s snow days are warmer than you&rsquo;d think, and its summers sit in the thermal comfort zone while Paris overshoots into heatwave territory.',
+        present_p3: 'The <strong>why</strong> explores geography &mdash; the distances between Bergen, Paris, and Troms&oslash; &mdash; to explain why Bergen&rsquo;s climate is so different from the Arctic Norway people imagine. The Gulf Stream and Norway&rsquo;s sheer length are the key factors.',
+        present_p4: 'Many charts include a small interactive component to keep them engaging: filtering the heatmap by similarity level, scrubbing through years on the daily chart, or choosing a European capital on the flight distance map to make the &ldquo;Norway is a long country&rdquo; point personal and relatable.',
+        present_p5: 'The site is bilingual (EN/FR), auto-detecting French users, because the French audience is the primary one for this misconception.',
+        h_tooling: 'Tooling summary',
+        tooling_intro: 'The technical implementation was built with Claude Code, following a guardrail-first methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the framework that guided each step.',
+        tooling_pipeline: '<strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:',
+        tooling_pre: 'fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API\nverify_data.py                          # Sanity checks + cross-validation\nclean_data.py     &rarr; data/clean/         # Merge and standardise\nanalyse.py                              # Test hypotheses\nexport_for_web.py &rarr; site/data/          # Export JSON for the website',
+        tooling_website: '<strong>Website</strong> &mdash; a single-page static site with no build step:',
+        tooling_website_list: '<li><a href="https://www.chartjs.org/">Chart.js</a> for interactive charts (lollipop, time series, scatter, bar)</li><li><a href="https://github.com/topojson/topojson-client">TopoJSON</a> + HTML Canvas for the background map and flight distance map</li><li><a href="https://cdn.jsdelivr.net/npm/world-atlas@2">Natural Earth / world-atlas</a> for country boundaries (50m resolution)</li><li>Vanilla JavaScript for i18n, animated transitions, and computed statistics</li>',
+        tooling_publication: '<strong>Publication</strong> &mdash; hosted on GitHub Pages, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.',
+        h_sources: 'Sources',
+        sources_data: '<strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.',
+        sources_project: '<strong>Project data</strong> &mdash; the raw API responses and cleaned horizon table are stored in the repository for reproducibility:',
+        sources_list: '<li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/data/raw">data/raw/</a> &mdash; raw JSON from Open-Meteo (Bergen + Paris, 2016&ndash;2025)</li><li><a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv">data/clean/horizon.csv</a> &mdash; the merged horizon table (3,653 rows &times; 13 columns)</li><li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/site/data">site/data/</a> &mdash; pre-computed JSON subsets powering the website charts</li>',
+        back_top: '&uarr; Back to top',
+        footer: 'A project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted)">C&eacute;dric Lombion</a>. Data: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a> (CC BY 4.0). Code: MIT. <a href="https://github.com/clombion/bergen-paris-weather" style="color:var(--muted)">GitHub</a>.',
+      },
+      fr: {
+        toc_intro: 'Introduction',
+        toc_explore: 'Explorer les donn\u00e9es',
+        toc_process: 'Le processus',
+        toc_tooling: 'Outils',
+        toc_sources: 'Sources',
+        back: '&larr; Retour au site',
+        title: 'Comparaison m\u00e9t\u00e9o Bergen vs Paris',
+        intro: 'Ce projet compare 10 ans de donn\u00e9es m\u00e9t\u00e9orologiques quotidiennes (2016&ndash;2025) entre Bergen, Norv\u00e8ge et Paris, France.',
+        findings: '<li>Bergen est en moyenne 5\u00b0C plus froide que Paris, mais l\u2019\u00e9cart se r\u00e9duit \u00e0 ~4\u00b0C en hiver</li><li>Les temp\u00e9ratures quotidiennes sont corr\u00e9l\u00e9es \u00e0 81% \u2014 quand une ville se refroidit, l\u2019autre aussi</li><li>Les jours de neige \u00e0 Bergen affichent 1,5\u00b0C en moyenne \u2014 pr\u00e8s de huit sur dix sont au-dessus de z\u00e9ro</li><li>Bergen est g\u00e9ographiquement plus proche de la C\u00f4te d\u2019Azur que de la Norv\u00e8ge arctique</li><li>Quand Paris d\u00e9passe 30\u00b0C (114 jours sur la d\u00e9cennie), Bergen affiche un agr\u00e9able 18\u00b0C en moyenne</li>',
+        h_explore: 'Explorer les donn\u00e9es',
+        snow_only: 'Jours de neige uniquement',
+        h_process: 'Le processus',
+        process_intro: 'Ce projet suit la m\u00e9thodologie du <a href="https://civicliteraci.es/data-pipeline/">pipeline School of Data</a> : Define, Find, Get, Verify, Clean, Analyse, Present.',
+        define_p: 'Parti d\u2019une intuition personnelle : \u00ab\u00a0le climat de Bergen et Paris sont similaires\u00a0\u00bb. Nous l\u2019avons d\u00e9clin\u00e9e en quatre hypoth\u00e8ses testables :',
+        define_list: '<li><strong>H1</strong> : Les temp\u00e9ratures moyennes quotidiennes sont \u00e0 moins de 3\u00b0C l\u2019une de l\u2019autre</li><li><strong>H2</strong> : Les variations de temp\u00e9rature sont corr\u00e9l\u00e9es \u2014 quand une ville se refroidit, l\u2019autre aussi</li><li><strong>H3</strong> : Les \u00e9pisodes neigeux co\u00efncident plus souvent que le hasard</li><li><strong>H4</strong> : Les journ\u00e9es ensoleill\u00e9es co\u00efncident plus souvent que le hasard</li>',
+        find_p: 'Six sources de donn\u00e9es ont \u00e9t\u00e9 \u00e9tudi\u00e9es (Open-Meteo, Meteostat, Frost API, M\u00e9t\u00e9o-France, Visual Crossing, NOAA GSOD). Open-Meteo \u00e9tait la seule \u00e0 proposer les six variables requises (temp moy/min/max, pr\u00e9cipitations, neige, ensoleillement) pour les deux villes avec une compl\u00e9tude de 100%, sans cl\u00e9 API.',
+        get_p: 'R\u00e9cup\u00e9ration de 3\u00a0653 jours de donn\u00e9es quotidiennes par ville depuis l\'<a href="https://open-meteo.com/">API Open-Meteo Historical Weather</a> (r\u00e9analyse ERA5/ECMWF IFS). Z\u00e9ro lacune, z\u00e9ro valeur nulle.',
+        verify_list: '<li><strong>Compl\u00e9tude</strong> : s\u00e9quences de dates continues, aucune valeur manquante</li><li><strong>Qualit\u00e9</strong> : aucune temp\u00e9rature hors des records climatiques plausibles, aucune pr\u00e9cipitation n\u00e9gative, aucune p\u00e9riode de valeurs plates suspecte</li><li><strong>V\u00e9rification crois\u00e9e</strong> : comparaison des mod\u00e8les ERA5 et ECMWF IFS. Les donn\u00e9es de Paris concordent \u00e0 1\u00b0C pr\u00e8s sur 94% des jours. Bergen pr\u00e9sente une incertitude de ~1,6\u00b0C entre mod\u00e8les \u2014 not\u00e9 mais non r\u00e9dhibitoire</li>',
+        clean_p: 'Fusion des deux villes en une table horizon unique (13 colonnes, granularit\u00e9 quotidienne). Standardisation des unit\u00e9s (ensoleillement en heures, neige en mm). Les jours extr\u00eames (Paris max >35\u00b0C, Bergen min <\u221210\u00b0C) avaient \u00e9t\u00e9 signal\u00e9s, mais un test de sensibilit\u00e9 a montr\u00e9 que leur suppression ne changeait les r\u00e9sultats que de <0,5\u00b0C \u2014 le filtrage a donc \u00e9t\u00e9 abandonn\u00e9.',
+        analyse_intro: 'L\u2019analyse a test\u00e9 chaque hypoth\u00e8se avec des m\u00e9thodes statistiques simples : diff\u00e9rences de temp\u00e9ratures quotidiennes et leurs distributions (H1), corr\u00e9lation de Pearson avec analyse de d\u00e9calage (H2), et taux de co-occurrence compar\u00e9s aux probabilit\u00e9s al\u00e9atoires (H3, H4). Ni mod\u00e9lisation ni machine learning \u2014 le jeu de donn\u00e9es est propre et les questions suffisamment directes pour des statistiques descriptives et inf\u00e9rentielles.',
+        hypothesis_table: '<table><thead><tr><th></th><th>Hypoth\u00e8se</th><th>R\u00e9sultat</th><th>Conclusion</th></tr></thead><tbody><tr><td><strong>H1</strong></td><td>Temp\u00e9ratures quotidiennes \u00e0 moins de 3\u00b0C</td><td>\u00c9cart moyen de 5,1\u00b0C ; seulement 25% des jours sous le seuil</td><td style="color:#c44e3f">Rejet\u00e9e</td></tr><tr><td><strong>H2</strong></td><td>Les temp\u00e9ratures sont corr\u00e9l\u00e9es au quotidien</td><td>r=0,81 quotidien, r=0,94 mensuel</td><td style="color:#2e6ea6">Confirm\u00e9e</td></tr><tr><td><strong>H3</strong></td><td>Les \u00e9pisodes neigeux co\u00efncident</td><td>2,6\u00d7 plus que le hasard</td><td style="color:#8b7ec8">Faiblement confirm\u00e9e</td></tr><tr><td><strong>H4</strong></td><td>Les journ\u00e9es ensoleill\u00e9es co\u00efncident</td><td>1,4\u00d7 plus que le hasard</td><td style="color:#8b7ec8">Faiblement confirm\u00e9e</td></tr></tbody></table>',
+        analyse_callout: 'Le rejet de H1 s\u2019est av\u00e9r\u00e9 \u00eatre la d\u00e9couverte la plus int\u00e9ressante. L\u2019\u00e9cart de 5\u00b0C cachait une histoire saisonni\u00e8re : il se r\u00e9duit \u00e0 4\u00b0C en hiver (avec certains mois o\u00f9 Bergen \u00e9tait m\u00eame plus chaude que Paris) et s\u2019\u00e9largit \u00e0 6\u00b0C en \u00e9t\u00e9. Cela a d\u00e9clench\u00e9 une boucle Analyse\u2192Define \u2014 l\u2019intuition initiale de \u00ab\u00a0temp\u00e9ratures similaires\u00a0\u00bb \u00e9tait probablement sp\u00e9cifique aux mois froids, o\u00f9 la diff\u00e9rence est la moins perceptible, et avait \u00e9t\u00e9 extrapol\u00e9e \u00e0 l\u2019ann\u00e9e enti\u00e8re. La question reformul\u00e9e est devenue : Bergen n\u2019est pas beaucoup plus froide que Paris quand le froid compte le plus (en hiver), et l\u2019\u00e9cart en \u00e9t\u00e9 est en fait un <em>avantage</em> \u2014 Bergen \u00e9vite totalement les canicules parisiennes.',
+        analyse_threshold: 'Une le\u00e7on suppl\u00e9mentaire sur la sensibilit\u00e9 des seuils : Bergen \u00ab\u00a0a de la neige 20% des jours\u00a0\u00bb selon les donn\u00e9es brutes du mod\u00e8le (toute chute de neige >0mm), mais cela inclut des quantit\u00e9s infimes issues de la r\u00e9analyse. Avec un seuil de 5mm+ (\u00ab\u00a0neige notable\u00a0\u00bb), on obtient 14% \u2014 ce qui correspondait bien mieux \u00e0 l\u2019exp\u00e9rience v\u00e9cue.',
+        present_p1: 'L\u2019objectif \u00e9tait d\u2019aider \u00e0 dissiper une id\u00e9e re\u00e7ue r\u00e9pandue \u2014 surtout chez les Fran\u00e7ais \u2014 selon laquelle la Norv\u00e8ge est un pays d\u00e9fini par la neige et le froid extr\u00eame. Le site est structur\u00e9 en deux parties : le <em>quoi</em> et le <em>pourquoi</em>.',
+        present_p2: 'Le <strong>quoi</strong> explore la comparaison des temp\u00e9ratures sous des angles objectifs et subjectifs. L\u2019angle objectif examine les donn\u00e9es brutes : moyennes mensuelles, corr\u00e9lations quotidiennes, cartes thermiques ann\u00e9e par ann\u00e9e. L\u2019angle subjectif reformule l\u2019\u00e9cart comme une exp\u00e9rience v\u00e9cue : les jours de neige \u00e0 Bergen sont plus doux qu\u2019on ne le pense, et ses \u00e9t\u00e9s se situent dans la zone de confort thermique tandis que Paris d\u00e9passe en territoire de canicule.',
+        present_p3: 'Le <strong>pourquoi</strong> explore la g\u00e9ographie \u2014 les distances entre Bergen, Paris et Troms\u00f8 \u2014 pour expliquer pourquoi le climat de Bergen est si diff\u00e9rent de la Norv\u00e8ge arctique que les gens imaginent. Le Gulf Stream et l\u2019immense longueur de la Norv\u00e8ge sont les facteurs cl\u00e9s.',
+        present_p4: 'De nombreux graphiques incluent une petite composante interactive pour maintenir l\u2019engagement : filtrer la carte thermique par niveau de similarit\u00e9, parcourir les ann\u00e9es sur le graphique quotidien, ou choisir une capitale europ\u00e9enne sur la carte des distances a\u00e9riennes pour rendre le point \u00ab\u00a0la Norv\u00e8ge est un long pays\u00a0\u00bb personnel et parlant.',
+        present_p5: 'Le site est bilingue (EN/FR), avec d\u00e9tection automatique des utilisateurs fran\u00e7ais, car le public fran\u00e7ais est le premier concern\u00e9 par cette id\u00e9e re\u00e7ue.',
+        h_tooling: 'R\u00e9sum\u00e9 des outils',
+        tooling_intro: 'L\u2019impl\u00e9mentation technique a \u00e9t\u00e9 r\u00e9alis\u00e9e avec Claude Code, selon une m\u00e9thodologie ax\u00e9e sur les garde-fous : chaque t\u00e2che d\u00e9l\u00e9gu\u00e9e au LLM \u00e9tait limit\u00e9e \u00e0 une seule phase du pipeline, et sa sortie \u00e9tait v\u00e9rifi\u00e9e avant de passer \u00e0 l\u2019\u00e9tape suivante. Chaque phase a produit un artefact v\u00e9rifiable \u2014 un script, un jeu de donn\u00e9es, un rapport \u2014 de sorte que l\u2019ensemble du pipeline peut \u00eatre reproduit sans aucun LLM, simplement en ex\u00e9cutant les scripts Python dans l\u2019ordre. La structure m\u00e9thodologique a suivi le <a href="https://civicliteraci.es/data-pipeline/">pipeline School of Data</a>, fournissant le cadre qui a guid\u00e9 chaque \u00e9tape.',
+        tooling_pipeline: '<strong>Pipeline de donn\u00e9es</strong> \u2014 cinq scripts Python, un par \u00e9tape :',
+        tooling_pre: 'fetch_data.py     \u2192 data/raw/           # T\u00e9l\u00e9chargement depuis l\'API Open-Meteo\nverify_data.py                          # V\u00e9rifications + validation crois\u00e9e\nclean_data.py     \u2192 data/clean/         # Fusion et standardisation\nanalyse.py                              # Test des hypoth\u00e8ses\nexport_for_web.py \u2192 site/data/          # Export JSON pour le site web',
+        tooling_website: '<strong>Site web</strong> \u2014 un site statique mono-page sans \u00e9tape de build :',
+        tooling_website_list: '<li><a href="https://www.chartjs.org/">Chart.js</a> pour les graphiques interactifs (lollipop, s\u00e9ries temporelles, nuage de points, barres)</li><li><a href="https://github.com/topojson/topojson-client">TopoJSON</a> + HTML Canvas pour la carte de fond et la carte des distances a\u00e9riennes</li><li><a href="https://cdn.jsdelivr.net/npm/world-atlas@2">Natural Earth / world-atlas</a> pour les fronti\u00e8res des pays (r\u00e9solution 50m)</li><li>JavaScript vanilla pour l\u2019i18n, les animations de transition et les statistiques calcul\u00e9es</li>',
+        tooling_publication: '<strong>Publication</strong> \u2014 h\u00e9berg\u00e9 sur GitHub Pages, servi directement depuis la racine du d\u00e9p\u00f4t. Code source sur <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.',
+        h_sources: 'Sources',
+        sources_data: '<strong>Source des donn\u00e9es</strong> \u2014 <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (r\u00e9analyse ERA5 / ECMWF IFS), 3\u00a0653 jours de donn\u00e9es quotidiennes par ville. Jours de neige d\u00e9finis comme jours avec 5mm+ de chutes de neige. Zone de confort thermique bas\u00e9e sur <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.',
+        sources_project: '<strong>Donn\u00e9es du projet</strong> \u2014 les r\u00e9ponses brutes de l\u2019API et la table horizon nettoy\u00e9e sont stock\u00e9es dans le d\u00e9p\u00f4t pour la reproductibilit\u00e9 :',
+        sources_list: '<li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/data/raw">data/raw/</a> \u2014 JSON brut d\u2019Open-Meteo (Bergen + Paris, 2016\u20132025)</li><li><a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv">data/clean/horizon.csv</a> \u2014 la table horizon fusionn\u00e9e (3\u00a0653 lignes \u00d7 13 colonnes)</li><li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/site/data">site/data/</a> \u2014 sous-ensembles JSON pr\u00e9-calcul\u00e9s alimentant les graphiques du site</li>',
+        back_top: '\u2191 Retour en haut',
+        footer: 'Un projet de <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted)">C\u00e9dric Lombion</a>. Donn\u00e9es : <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a> (CC BY 4.0). Code : MIT. <a href="https://github.com/clombion/bergen-paris-weather" style="color:var(--muted)">GitHub</a>.',
+      },
+    };
+
+    let currentLang = 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      try { localStorage.setItem('lang', lang); } catch(e) {}
+      document.documentElement.lang = lang;
+
+      // Update toggle
+      document.querySelectorAll('#langToggle span').forEach(s => {
+        s.classList.toggle('active', s.dataset.lang === lang);
+      });
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (I18N[lang] && I18N[lang][key] !== undefined) {
+          el.innerHTML = I18N[lang][key];
+        }
+      });
+    }
+
+    function detectLang() {
+      try { const saved = localStorage.getItem('lang'); if (saved) return saved; } catch(e) {}
+      const browserLang = navigator.language || navigator.userLanguage || '';
+      return browserLang.startsWith('fr') ? 'fr' : 'en';
+    }
+
+    // Language toggle click handlers
+    document.querySelectorAll('#langToggle span').forEach(s => {
+      s.addEventListener('click', () => setLang(s.dataset.lang));
+    });
+
+    // Auto-detect and apply language on page load
+    const detectedLang = detectLang();
+    if (detectedLang === 'fr') {
+      setLang('fr');
+    }
+  </script>
 
   <script>
     // TOC scroll tracking

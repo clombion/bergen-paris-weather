@@ -436,7 +436,7 @@
   <div class="lang-toggle" id="langToggle">
     <span class="active" data-lang="en">EN</span>
     <span data-lang="fr">FR</span>
-    <a href="about.html" class="about-link" data-i18n-attr="about">About</a>
+    <a href="about.html" class="about-link" data-i18n="about_link">About</a>
   </div>
 
   <canvas id="mapBg" class="map-bg"></canvas>
@@ -621,6 +621,7 @@
         stat_bergen_above30: 'Bergen days above 30°C',
         stat_bergen_avg_when_paris_hot: 'Bergen avg when Paris >30°C',
         stat_comfort_pct: 'Summer days Bergen is cooler',
+        about_link: 'About',
         filter_all: 'All',
         filter_close: 'Similar',
         filter_typical: 'Average',
@@ -696,6 +697,7 @@
         stat_bergen_above30: 'Jours à Bergen au-dessus de 30°C',
         stat_bergen_avg_when_paris_hot: 'Bergen moy. quand Paris >30°C',
         stat_comfort_pct: 'Jours d\'été où Bergen est plus frais',
+        about_link: 'À propos',
         filter_all: 'Tout',
         filter_close: 'Proches',
         filter_typical: 'Moyens',
@@ -758,6 +760,7 @@
 
     function setLang(lang) {
       currentLang = lang;
+      try { localStorage.setItem('lang', lang); } catch(e) {}
       document.documentElement.lang = lang;
       document.title = lang === 'fr'
         ? 'Bergen vs Paris — La surprise hivernale'
@@ -807,8 +810,8 @@
       }
     }
 
-    // Detect French users
     function detectLang() {
+      try { const saved = localStorage.getItem('lang'); if (saved) return saved; } catch(e) {}
       const browserLang = navigator.language || navigator.userLanguage || '';
       return browserLang.startsWith('fr') ? 'fr' : 'en';
     }
