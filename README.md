@@ -86,13 +86,27 @@ analyse.py                              # Test hypotheses
 export_for_web.py → site/data/          # Export JSON for the website
 ```
 
-## Run locally
+## Build the site
+
+Content lives in Markdown files (`content/en/`, `content/fr/`) using [Markdoc](https://markdoc.dev/) custom tags. A build script renders them into static HTML.
+
+```bash
+pnpm install
+node build.js
+```
+
+The build outputs to `dist/`. To preview locally:
+
+```bash
+pnpm exec serve dist
+```
+
+## Run the data pipeline
 
 ```bash
 python3 fetch_data.py
 python3 clean_data.py
 python3 export_for_web.py
-python3 -m http.server 8080
 ```
 
 ## Data

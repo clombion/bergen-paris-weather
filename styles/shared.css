@@ -1,0 +1,146 @@
+:root {
+  --bg: #fafaf8;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --bergen: #2e6ea6;
+  --paris: #c44e3f;
+  --card: #ffffff;
+  --border: #e5e5e0;
+  --highlight: #f0ede4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.container a {
+  color: var(--text);
+  text-decoration: none;
+  background-image: linear-gradient(120deg, rgba(46, 110, 166, 0.28) 0%, rgba(46, 110, 166, 0.38) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 40%;
+  background-position: 0 95%;
+  transition: background-size 0.2s ease;
+}
+
+.container a:hover {
+  background-image: linear-gradient(120deg, rgba(46, 110, 166, 0.25) 0%, rgba(46, 110, 166, 0.4) 15%, rgba(46, 110, 166, 0.32) 40%, rgba(46, 110, 166, 0.42) 70%, rgba(46, 110, 166, 0.26) 100%);
+  background-size: 100% 92%;
+  background-position: 0 90%;
+}
+
+.highlight-box {
+  background: var(--highlight);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin: 24px 0;
+  font-size: 1.05rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.stat-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-card .number {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card .label {
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.step-meta {
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.step-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--highlight);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* --- Tag component styles (from markdoc/tags.js) --- */
+
+.year-slider-wrapper {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.byline {
+  margin-top: 20px;
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: #b0ada4;
+  letter-spacing: 0.03em;
+}
+
+.data-explorer {
+  margin: 16px 0;
+}
+
+.data-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.85rem;
+}
+
+.data-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}

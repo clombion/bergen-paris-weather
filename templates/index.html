@@ -1,35 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{LANG}}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bergen vs Paris — The Winter Surprise</title>
+  <title>{{TITLE}}</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <link rel="stylesheet" href="{{STYLES_BASE}}shared.css">
   <style>
-    :root {
-      --bg: #fafaf8;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --bergen: #2e6ea6;
-      --paris: #c44e3f;
-      --gap: #8b7ec8;
-      --card: #ffffff;
-      --border: #e5e5e0;
-      --highlight: #f0ede4;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Georgia', 'Times New Roman', serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
     .map-bg {
       position: absolute;
       top: 0;
@@ -37,12 +16,6 @@
       pointer-events: none;
       z-index: -1;
       will-change: transform;
-    }
-
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
     }
 
     header {
@@ -65,6 +38,26 @@
       color: var(--muted);
       max-width: 540px;
       margin: 0 auto;
+    }
+
+    header .byline a {
+      color: #b0ada4;
+      text-decoration: none;
+      border-bottom: 1px solid #d0cec6;
+      background-image: none;
+    }
+
+    header .byline a:hover {
+      color: #8a8780;
+      border-bottom-color: #b0ada4;
+      background-image: none;
+    }
+
+    header .byline a,
+    .lang-toggle a,
+    .about-link,
+    .methodology a {
+      background-image: none;
     }
 
     .legend-inline {
@@ -115,72 +108,6 @@
 
     .chart-wrap canvas {
       width: 100% !important;
-    }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin: 24px 0;
-    }
-
-    .stat-grid-2 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .stat-card .number {
-      font-size: 2rem;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .stat-card .label {
-      font-family: -apple-system, system-ui, sans-serif;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .highlight-box {
-      background: var(--highlight);
-      border-radius: 8px;
-      padding: 24px 28px;
-      margin: 24px 0;
-      font-size: 1.05rem;
-    }
-
-    .surprise-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 16px 0;
-    }
-
-    .surprise-tag {
-      font-family: -apple-system, system-ui, sans-serif;
-      font-size: 0.82rem;
-      padding: 4px 12px;
-      border-radius: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-    }
-
-    .surprise-tag.warmer {
-      background: #e8f0f8;
-      border-color: var(--bergen);
-      color: var(--bergen);
-      font-weight: 600;
     }
 
     .heatmap-grid {
@@ -335,7 +262,7 @@
       cursor: pointer;
     }
 
-    .lang-toggle span {
+    .lang-toggle a {
       padding: 4px 12px;
       border-radius: 14px;
       transition: all 0.25s ease;
@@ -355,7 +282,7 @@
       color: var(--text);
     }
 
-    .lang-toggle span.active {
+    .lang-toggle a.active {
       background: var(--card);
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       font-weight: 600;
@@ -434,410 +361,41 @@
 </head>
 <body>
   <div class="lang-toggle" id="langToggle">
-    <span class="active" data-lang="en">EN</span>
-    <span data-lang="fr">FR</span>
-    <a href="about.html" class="about-link" data-i18n="about_link">About</a>
+    {{LANG_TOGGLE}}
   </div>
 
   <canvas id="mapBg" class="map-bg"></canvas>
   <canvas id="snowCanvas"></canvas>
 
   <div class="container">
-
-    <header>
-      <h1 data-i18n="title">Bergen is not the frozen north<br>you think it is</h1>
-      <p class="subtitle" data-i18n="subtitle">
-        In winter, Norway's rainiest city is barely colder than Paris.
-        A decade of weather data tells a surprising story.
-      </p>
-      <p style="margin-top:20px;font-family:-apple-system,system-ui,sans-serif;font-size:0.75rem;color:#b0ada4;letter-spacing:0.03em" data-i18n="byline">
-        A little side project by <a href="https://linkedin.com/in/cedriclombion" style="color:#b0ada4;text-decoration:none;border-bottom:1px solid #d0cec6" target="_blank" rel="noopener">Cédric Lombion</a>
-      </p>
-    </header>
-
-    <div class="legend-inline">
-      <span><span class="legend-dot" style="background:var(--bergen)"></span> Bergen</span>
-      <span><span class="legend-dot" style="background:var(--paris)"></span> Paris</span>
-    </div>
-
-    <!-- Monthly temperature comparison -->
-    <section>
-      <h2 data-i18n="gap_title">The gap narrows in winter</h2>
-      <p class="lead" data-i18n="gap_lead">
-        Average monthly temperatures over 2016–2025. In summer, Paris pulls
-        ahead by 6°C. But from November to February, the difference shrinks
-        to around 4°C.
-      </p>
-      <div class="chart-wrap">
-        <canvas id="monthlyChart" height="300"></canvas>
-      </div>
-    </section>
-
-
-    <!-- Key stats -->
-    <section>
-      <div class="stat-grid" id="keyStats"></div>
-    </section>
-
-    <!-- Year × Month heatmap -->
-    <section>
-      <h2 data-i18n="heatmap_title">A decade, month by month</h2>
-      <p class="lead" data-i18n="heatmap_lead">
-        Each cell shows how much colder Bergen was than Paris.
-        The lighter the cell, the closer they were. Blue means Bergen was warmer.
-      </p>
-      <div class="segmented" id="heatmapFilter">
-        <div class="seg-slider"></div>
-        <button class="seg-btn active" data-filter="all" data-i18n="filter_all">All</button>
-        <button class="seg-btn" data-filter="close" data-i18n="filter_close">Similar</button>
-        <button class="seg-btn" data-filter="typical" data-i18n="filter_typical">Average</button>
-        <button class="seg-btn" data-filter="far" data-i18n="filter_far">Different</button>
-      </div>
-      <div class="chart-wrap" style="overflow-x:auto">
-        <div id="heatmap" class="heatmap-grid" style="min-width:500px"></div>
-      </div>
-    </section>
-
-    <!-- Summer comfort -->
-    <section>
-      <h2 data-i18n="comfort_title">When does Bergen actually feel better?</h2>
-      <p class="lead" data-i18n="comfort_lead">
-        A lower temperature is a disadvantage in winter — but in summer,
-        it's a gift. Each point below is a day Paris exceeded 30°C.
-        The green zone shows the comfortable range. Bergen stays in it —
-        Paris doesn't.
-      </p>
-      <div class="chart-wrap">
-        <canvas id="comfortChart" height="320"></canvas>
-      </div>
-      <div class="stat-grid" id="comfortStats"></div>
-    </section>
-
-    <!-- Daily co-movement -->
-    <section>
-      <h2 data-i18n="comovement_title">They move together</h2>
-      <p class="lead" data-i18n="comovement_lead">
-        When a cold front sweeps across Europe, both cities feel it.
-        Day to day, their temperatures move in sync 81% of the time.
-        Month to month, the match tightens to 94%.
-      </p>
-      <div class="stat-grid stat-grid-2" style="margin-bottom: 16px" id="corrStats"></div>
-      <div class="chart-wrap" style="position:relative;height:320px">
-        <canvas id="dailyChart"></canvas>
-      </div>
-      <div style="margin-top:16px;display:flex;align-items:center;gap:12px;font-family:-apple-system,system-ui,sans-serif;font-size:0.9rem;color:var(--muted)">
-        <span>2016</span>
-        <input type="range" id="yearSlider" min="2016" max="2025" value="2025" step="1"
-          style="flex:1;accent-color:#b0ada4;cursor:pointer">
-        <span>2025</span>
-        <span id="yearLabel" style="font-weight:600;color:var(--text);min-width:3em;text-align:center">2025</span>
-      </div>
-    </section>
-
-    <!-- Snow -->
-    <section id="snowSection">
-      <h2 data-i18n="snow_title">Bergen's snow days are warmer than you think</h2>
-      <p class="lead" data-i18n="snow_lead">
-        Bergen gets noticeable snow on about 14% of days, mostly from
-        November to March. But this isn't Arctic cold. The average temperature
-        on a Bergen snow day is 1.5°C — almost eight in ten snow days are
-        above freezing. On those same days, Tromsø — Norway's largest city
-        above the Arctic Circle, the one with polar nights and northern
-        lights — averages -5.1°C.
-      </p>
-      <div class="stat-grid" id="snowStats"></div>
-      <div class="stat-grid stat-grid-2" id="snowGapStats"></div>
-      <p class="lead" data-i18n="snow_closing">
-        Even on its snowiest days, Bergen is closer to Paris than to Tromsø.
-        Bergen's snow is wet Atlantic snow — falling at temperatures where
-        Paris would have cold rain. When Paris shivers at 3°C in a winter
-        drizzle, Bergen is at 1°C in a snowfall. Not so different after all.
-      </p>
-    </section>
-
-    <!-- Why: Geography -->
-    <section>
-      <h2 data-i18n="geo_title">The Norway you're thinking of is very far from Bergen</h2>
-      <p class="lead" data-i18n="geo_lead">
-        When people hear "Norway," they picture the Arctic — polar bears,
-        northern lights, endless ice. But that's Tromsø and the far north,
-        Norway's Arctic capital, 1,200&nbsp;km from Bergen.
-        Bergen sits on the southwest coast, warmed by the Gulf Stream,
-        closer to the Mediterranean than to the Arctic.
-      </p>
-      <div style="margin:16px 0">
-        <canvas id="flightMap" height="480"></canvas>
-      </div>
-      <h3 style="font-weight:400;font-size:1.3rem;margin-top:32px">
-        <span data-i18n="from_bergen">From Bergen to</span>
-        <select id="capitalSelect" class="capital-select"></select>
-      </h3>
-      <p id="distanceSummary" class="lead" style="margin-top:8px"></p>
-      <div class="chart-wrap" style="position:relative;height:180px">
-        <canvas id="flightChart"></canvas>
-      </div>
-      <div class="highlight-box" data-i18n="gulf_stream">
-        The Gulf Stream carries warm Atlantic water along Norway's west coast,
-        keeping Bergen's winters far milder than its latitude would suggest.
-        At 60°N, Bergen should be as cold as Anchorage, Alaska — instead,
-        its January average is around 1°C, almost Parisian.
-      </div>
-    </section>
-
-    <!-- Methodology -->
-    <div class="methodology">
-      <h3 data-i18n="method_title">Methodology</h3>
-      <p data-i18n="method_p1">
-        Daily weather data from <strong>Open-Meteo Historical Weather API</strong>
-        (ERA5 / ECMWF IFS reanalysis), covering 1 Jan 2016 – 31 Dec 2025 (3,653 days).
-        Bergen coordinates: 60.39°N, 5.32°E. Paris: 48.86°N, 2.35°E.
-      </p>
-      <p data-i18n="method_p2">
-        Cross-checked against ECMWF IFS model; Paris data agrees within 1°C on 94% of days.
-        Bergen shows ~1.6°C model uncertainty — noted but not disqualifying.
-        Snow days defined as days with 5mm+ snowfall.
-      </p>
-    </div>
-
+    {{CONTENT}}
   </div>
 
   <script>
-    // --- i18n ---
-    const I18N = {
-      en: {
-        title: 'Bergen is not the frozen north<br>you think it is',
-        subtitle: 'In winter, Norway\'s rainiest city is barely colder than Paris. A decade of weather data tells a surprising story.',
-        byline: 'A little side project by <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted);text-decoration:underline" target="_blank" rel="noopener">Cédric Lombion</a>',
-        gap_title: 'The gap narrows in winter',
-        gap_lead: 'Average monthly temperatures over 2016–2025. In summer, Paris pulls ahead by 6°C. But from November to February, the difference shrinks to around 4°C.',
-        stat_winter: 'Winter gap (Dec–Feb)',
-        stat_summer: 'Summer gap (Jun–Aug)',
-        stat_avg: 'Average gap year-round',
-        heatmap_title: 'A decade, month by month',
-        heatmap_lead: 'Each cell shows how much colder Bergen was than Paris. The lighter the cell, the closer they were. Blue means Bergen was warmer.',
-        comfort_title: 'When does Bergen actually feel better?',
-        comfort_lead: 'A lower temperature is a disadvantage in winter — but in summer, it\'s a gift. Each point below is a day Paris exceeded 30°C. The green zone shows the <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1" target="_blank" rel="noopener" style="color:var(--muted)">thermal comfort range</a> (20–25°C). Bergen stays in it — Paris doesn\'t.',
-        stat_paris_above30: 'Paris days above 30°C',
-        stat_bergen_above30: 'Bergen days above 30°C',
-        stat_bergen_avg_when_paris_hot: 'Bergen avg when Paris >30°C',
-        stat_comfort_pct: 'Summer days Bergen is cooler',
-        about_link: 'About',
-        filter_all: 'All',
-        filter_close: 'Similar',
-        filter_typical: 'Average',
-        filter_far: 'Different',
-        comovement_title: 'They move together',
-        comovement_lead: 'When a cold front sweeps across Europe, both cities feel it. Day to day, their temperatures move in sync 81% of the time. Month to month, the match tightens to 94%.',
-        stat_daily_sync: 'Daily temps move together',
-        stat_monthly_sync: 'Monthly temps move together',
-        snow_title: 'Bergen\'s snow days are warmer than you think',
-        snow_lead: 'Bergen gets noticeable snow on 14% of days — 511 days over the decade. But this isn\'t Arctic cold. The average temperature on a Bergen snow day is 1.5°C — almost eight in ten snow days are above freezing. On those same days, Tromsø — Norway\'s largest city above the Arctic Circle, the one with polar nights and northern lights — averages -5.1°C.',
-        stat_snow_avg: 'Average temp on snow days',
-        stat_snow_above0: 'Snow days above 0°C',
-        stat_snow_below5: 'Snow days below -5°C',
-        stat_snow_paris: 'Gap with Paris on snow days',
-        stat_snow_tromso: 'Gap with Tromsø on snow days',
-        snow_closing: 'Even on its snowiest days, Bergen is closer to Paris than to Tromsø. Bergen\'s snow is wet Atlantic snow — falling at temperatures where Paris would have cold rain. When Paris shivers at 3°C in a winter drizzle, Bergen is at 1°C in a snowfall. Not so different after all.',
-        geo_title: 'The Norway you\'re thinking of is very far from Bergen',
-        geo_lead: 'When people hear "Norway," they picture the Arctic — polar bears, northern lights, endless ice. But that\'s Tromsø and the far north, Norway\'s Arctic capital, 1,200\u00a0km from Bergen. Bergen sits on the southwest coast, warmed by the Gulf Stream, closer to the Mediterranean than to the Arctic.',
-        from_bergen: 'From Bergen to',
-        gulf_stream: 'The Gulf Stream carries warm Atlantic water along Norway\'s west coast, keeping Bergen\'s winters far milder than its latitude would suggest. At 60°N, Bergen should be as cold as Anchorage, Alaska — instead, its January average is around 1°C, almost Parisian.',
-        method_title: 'Methodology',
-        method_p1: 'Daily weather data from <strong>Open-Meteo Historical Weather API</strong> (ERA5 / ECMWF IFS reanalysis), covering 1 Jan 2016 – 31 Dec 2025 (3,653 days). Bergen coordinates: 60.39°N, 5.32°E. Paris: 48.86°N, 2.35°E.',
-        method_p2: 'Cross-checked against ECMWF IFS model; Paris data agrees within 1°C on 94% of days. Bergen shows ~1.6°C model uncertainty — noted but not disqualifying. Snow days defined as days with 5mm+ snowfall.',
-        km_from_bergen: 'km from Bergen',
-        dist_text: (name, km, tKm, pKm, pToC) => {
-          const tMins = Math.round(tKm / 800 * 60);
-          const tTime = tMins >= 120 ? `${(tMins/60).toFixed(1)}h` : `${tMins} min`;
-          let s = `Bergen to Tromsø is ${tKm.toLocaleString()} km — about the same as Bergen to Paris (${pKm.toLocaleString()} km). `;
-          if (Math.abs(km - tKm) < 150) {
-            s += `For comparison, ${name} is almost exactly the same distance (${km.toLocaleString()} km) — you'd travel as far to reach ${name} as to reach Arctic Norway.`;
-          } else if (km < tKm) {
-            s += `For comparison, ${name} is only ${km.toLocaleString()} km away — a shorter trip than to Norway's own Arctic north.`;
-          } else if (km < tKm * 2) {
-            s += `For comparison, ${name} is ${km.toLocaleString()} km away — not that much further than Tromsø.`;
-          } else {
-            s += `For comparison, even ${name}, at ${km.toLocaleString()} km, is only ${(km / tKm).toFixed(1)}× the Bergen–Tromsø distance.`;
-          }
-          const pMins = Math.round(pToC / 800 * 60);
-          const pTime = pMins >= 120 ? `${Math.floor(pMins/60)}h and ${pMins%60} min` : `${pMins} min`;
-          const bpMins = Math.round(pKm / 800 * 60);
-          const pTimeFactor = (bpMins / pMins).toFixed(1);
-          const ratio = pKm / pToC;
-          function ratioTextEn(r) {
-            if (r >= 1.8 && r <= 2.2) return 'twice as fast';
-            if (r >= 2.8 && r <= 3.2) return 'three times faster';
-            if (r >= 3.8 && r <= 4.2) return 'four times faster';
-            return `about ${r.toFixed(1)}× faster`;
-          }
-          if (ratio > 1.3) {
-            s += ` On the other hand, Paris–${name} takes ${pTime} by plane, ${ratioTextEn(ratio)} than Paris–Bergen.`;
-          } else if (pToC > pKm * 1.15) {
-            s += ` Interestingly, Paris–${name} (${pToC.toLocaleString()} km) is even longer than Paris–Bergen.`;
-          } else {
-            s += ` Paris–${name} is about the same distance as Paris–Bergen (${pToC.toLocaleString()} km).`;
-          }
-          return s;
-        },
-      },
-      fr: {
-        title: 'Bergen n\'est pas le grand nord<br>que vous imaginez',
-        subtitle: 'En hiver, la ville la plus pluvieuse de Norvège est à peine plus froide que Paris. Une décennie de données météo raconte une histoire surprenante.',
-        byline: 'Un petit projet perso de <a href="https://linkedin.com/in/cedriclombion" style="color:var(--muted);text-decoration:underline" target="_blank" rel="noopener">Cédric Lombion</a>',
-        gap_title: 'L\'écart se réduit en hiver',
-        gap_lead: 'Températures moyennes mensuelles sur 2016–2025. En été, Paris prend 6°C d\'avance. Mais de novembre à février, la différence se réduit à environ 4°C.',
-        stat_winter: 'Écart hivernal (déc–fév)',
-        stat_summer: 'Écart estival (juin–août)',
-        stat_avg: 'Écart moyen annuel',
-        heatmap_title: 'Une décennie, mois par mois',
-        heatmap_lead: 'Chaque cellule indique de combien Bergen était plus froide que Paris. Plus la cellule est claire, plus les températures étaient proches. Une cellule bleue signifie que Bergen était plus chaude.',
-        comfort_title: 'Quand fait-il meilleur à Bergen qu\'à Paris ?',
-        comfort_lead: 'Une température plus basse est un désavantage en hiver — mais en été, c\'est un cadeau. Chaque point ci-dessous représente un jour où Paris a dépassé 30°C. La zone verte indique la <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1" target="_blank" rel="noopener" style="color:var(--muted)">zone de confort thermique</a> (20–25°C). Bergen y reste — pas Paris.',
-        stat_paris_above30: 'Jours à Paris au-dessus de 30°C',
-        stat_bergen_above30: 'Jours à Bergen au-dessus de 30°C',
-        stat_bergen_avg_when_paris_hot: 'Bergen moy. quand Paris >30°C',
-        stat_comfort_pct: 'Jours d\'été où Bergen est plus frais',
-        about_link: 'À propos',
-        filter_all: 'Tout',
-        filter_close: 'Proches',
-        filter_typical: 'Moyens',
-        filter_far: 'Éloignés',
-        comovement_title: 'Elles bougent ensemble',
-        comovement_lead: 'Quand une vague de froid balaie l\'Europe, les deux villes le ressentent. Au jour le jour, leurs températures évoluent en phase 81% du temps. Mois par mois, la concordance atteint 94%.',
-        stat_daily_sync: 'Corrélation quotidienne des températures',
-        stat_monthly_sync: 'Corrélation mensuelle des températures',
-        snow_title: 'Les jours de neige à Bergen sont plus doux qu\'on ne le pense',
-        snow_lead: 'Bergen connaît des chutes de neige notables 14% des jours — 511 jours sur la décennie. Mais ce n\'est pas le froid arctique. La température moyenne d\'un jour de neige à Bergen est de 1,5°C — près de huit jours de neige sur dix sont au-dessus de zéro. Ces mêmes jours, Tromsø — la plus grande ville norvégienne au-dessus du cercle polaire, celle des nuits polaires et des aurores boréales — affiche -5,1°C en moyenne.',
-        stat_snow_avg: 'Temp. moyenne les jours de neige',
-        stat_snow_above0: 'Jours de neige au-dessus de 0°C',
-        stat_snow_below5: 'Jours de neige en dessous de -5°C',
-        stat_snow_paris: 'Écart avec Paris les jours de neige',
-        stat_snow_tromso: 'Écart avec Tromsø les jours de neige',
-        snow_closing: 'Même lors de ses jours les plus enneigés, Bergen est plus proche de Paris que de Tromsø. La neige de Bergen est une neige atlantique humide — elle tombe à des températures où Paris reçoit de la pluie froide. Quand Paris frissonne à 3°C sous la bruine, Bergen est à 1°C sous la neige. Pas si différent, au fond.',
-        geo_title: 'La Norvège à laquelle vous pensez est très loin de Bergen',
-        geo_lead: 'Quand on entend « Norvège », on imagine l\'Arctique — ours polaires, aurores boréales, glace à perte de vue. Mais c\'est Tromsø et le Grand Nord, la capitale arctique de la Norvège, à 1\u00a0200\u00a0km de Bergen. Bergen se trouve sur la côte sud-ouest, réchauffée par le Gulf Stream, plus proche de la Méditerranée que de l\'Arctique.',
-        from_bergen: 'De Bergen à',
-        gulf_stream: 'Le Gulf Stream transporte des eaux atlantiques chaudes le long de la côte ouest de la Norvège, rendant les hivers de Bergen bien plus doux que sa latitude ne le suggère. À 60°N, Bergen devrait être aussi froide qu\'Anchorage en Alaska — au lieu de cela, sa moyenne de janvier est d\'environ 1°C, presque parisienne.',
-        method_title: 'Méthodologie',
-        method_p1: 'Données météorologiques quotidiennes provenant de l\'<strong>API Open-Meteo Historical Weather</strong> (réanalyse ERA5 / ECMWF IFS), couvrant du 1er janvier 2016 au 31 décembre 2025 (3\u00a0653 jours). Coordonnées Bergen : 60,39°N, 5,32°E. Paris : 48,86°N, 2,35°E.',
-        method_p2: 'Vérifié par croisement avec le modèle ECMWF IFS ; les données de Paris concordent à 1°C près sur 94% des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire. Jours de neige définis comme jours avec 5mm+ de chutes de neige.',
-        km_from_bergen: 'km depuis Bergen',
-        dist_text: (name, km, tKm, pKm, pToC) => {
-          let s = `Bergen–Tromsø fait ${tKm.toLocaleString('fr')} km — à peu près autant que Bergen–Paris (${pKm.toLocaleString('fr')} km). `;
-          if (Math.abs(km - tKm) < 150) {
-            s += `En comparaison, ${name} est presque à la même distance (${km.toLocaleString('fr')} km) — il faut voyager aussi loin pour atteindre ${name} que pour rejoindre la Norvège arctique.`;
-          } else if (km < tKm) {
-            s += `En comparaison, ${name} n'est qu'à ${km.toLocaleString('fr')} km — un trajet plus court que vers le nord arctique de la Norvège.`;
-          } else if (km < tKm * 2) {
-            s += `En comparaison, ${name} est à ${km.toLocaleString('fr')} km — pas beaucoup plus loin que Tromsø.`;
-          } else {
-            s += `En comparaison, même ${name}, à ${km.toLocaleString('fr')} km, ne représente que ${(km / tKm).toFixed(1)}× la distance Bergen–Tromsø.`;
-          }
-          const pMins = Math.round(pToC / 800 * 60);
-          const pTime = pMins >= 120 ? `${Math.floor(pMins/60)}h et ${pMins%60} min` : `${pMins} min`;
-          const bpMins = Math.round(pKm / 800 * 60);
-          const pTimeFactor = (bpMins / pMins).toFixed(1);
-          const ratio = pKm / pToC;
-          function ratioTextFr(r) {
-            if (r >= 1.8 && r <= 2.2) return 'deux fois plus rapide';
-            if (r >= 2.8 && r <= 3.2) return 'trois fois plus rapide';
-            if (r >= 3.8 && r <= 4.2) return 'quatre fois plus rapide';
-            return `environ ${r.toFixed(1)}× plus rapide`;
-          }
-          if (ratio > 1.3) {
-            s += ` D'autre part, Paris–${name} ne prend que ${pTime} en avion, ${ratioTextFr(ratio)} que Paris–Bergen.`;
-          } else if (pToC > pKm * 1.15) {
-            s += ` Fait intéressant, Paris–${name} (${pToC.toLocaleString('fr')} km) est même plus long que Paris–Bergen.`;
-          } else {
-            s += ` Paris–${name} est à peu près la même distance que Paris–Bergen (${pToC.toLocaleString('fr')} km).`;
-          }
-          return s;
-        },
-      },
-    };
-
-    let currentLang = 'en';
-
-    function setLang(lang) {
-      currentLang = lang;
-      try { localStorage.setItem('lang', lang); } catch(e) {}
-      document.documentElement.lang = lang;
-      document.title = lang === 'fr'
-        ? 'Bergen vs Paris — La surprise hivernale'
-        : 'Bergen vs Paris — The Winter Surprise';
-
-      // Update toggle
-      document.querySelectorAll('#langToggle span').forEach(s => {
-        s.classList.toggle('active', s.dataset.lang === lang);
-      });
-
-      // Update all data-i18n elements
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
-        if (I18N[lang][key]) {
-          el.innerHTML = I18N[lang][key];
-        }
-      });
-
-      // Recompute stats with new labels
-      if (dailyData) { computeStats(); observeNumbers(); }
-
-      // Update distance summary
-      const sel = document.getElementById('capitalSelect');
-      if (sel && sel.value) {
-        const capital = CAPITALS.find(c => c.name === sel.value);
-        if (capital) {
-          const km = Math.round(haversineKm(BERGEN_COORD[0], BERGEN_COORD[1], capital.lon, capital.lat));
-          updateDistanceSummary(capital, km);
-        }
-      }
-
-      // Update flight chart axis label
-      if (flightChart) {
-        flightChart.options.scales.x.title.text = I18N[lang].km_from_bergen;
-        flightChart.update('none');
-      }
-
-      // Reposition segmented slider after text change
-      const segContainer = document.getElementById('heatmapFilter');
-      if (segContainer) {
-        const activeBtn = segContainer.querySelector('.seg-btn.active');
-        const slider = segContainer.querySelector('.seg-slider');
-        if (activeBtn && slider) {
-          slider.style.width = activeBtn.offsetWidth + 'px';
-          slider.style.transform = `translateX(${activeBtn.offsetLeft - 3}px)`;
-        }
-      }
-    }
-
-    function detectLang() {
-      try { const saved = localStorage.getItem('lang'); if (saved) return saved; } catch(e) {}
-      const browserLang = navigator.language || navigator.userLanguage || '';
-      return browserLang.startsWith('fr') ? 'fr' : 'en';
-    }
+    const LANG = '{{LANG}}';
+    const I18N = {{I18N_JSON}};
 
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const BERGEN = '#2e6ea6';
     const PARIS = '#c44e3f';
-    const GAP = '#8b7ec8';
+
 
     let dailyData, monthlyData, yearMonthData, surprisesData;
 
     async function loadData() {
       [dailyData, monthlyData, yearMonthData, surprisesData] = await Promise.all([
-        fetch('site/data/daily.json').then(r => r.json()),
-        fetch('site/data/monthly.json').then(r => r.json()),
-        fetch('site/data/year_month.json').then(r => r.json()),
-        fetch('site/data/surprises.json').then(r => r.json()),
+        fetch('{{DATA_BASE}}daily.json').then(r => r.json()),
+        fetch('{{DATA_BASE}}monthly.json').then(r => r.json()),
+        fetch('{{DATA_BASE}}year_month.json').then(r => r.json()),
+        fetch('{{DATA_BASE}}surprises.json').then(r => r.json()),
       ]);
       render();
     }
 
     function statCard(value, labelKey, color) {
-      const t = I18N[currentLang];
       return `<div class="stat-card">
         <div class="number"${color ? ` style="color:${color}"` : ''}>${value}</div>
-        <div class="label" data-i18n="${labelKey}">${t[labelKey]}</div>
+        <div class="label">${I18N[labelKey]}</div>
       </div>`;
     }
 
@@ -1017,7 +575,7 @@
                 unit: 'year',
                 tooltipFormat: 'dd MMM yyyy',
               },
-              title: { display: true, text: currentLang === 'fr' ? `${n} jours de canicule à Paris (>30°C)` : `${n} Paris heatwave days (>30°C)` },
+              title: { display: true, text: LANG === 'fr' ? `${n} jours de canicule \u00e0 Paris (>30\u00b0C)` : `${n} Paris heatwave days (>30\u00b0C)` },
               grid: { display: false },
             },
           },
@@ -1511,8 +1069,7 @@
     function updateDistanceSummary(capital, capitalKm) {
       const el = document.getElementById('distanceSummary');
       const parisToCapital = Math.round(haversineKm(PARIS_COORD[0], PARIS_COORD[1], capital.lon, capital.lat));
-      const t = I18N[currentLang];
-      el.innerHTML = t.dist_text(capital.name, capitalKm, TROMSO_KM, PARIS_KM, parisToCapital);
+      el.innerHTML = I18N.dist_text(capital.name, capitalKm, TROMSO_KM, PARIS_KM, parisToCapital);
     }
 
     // Flight map with cached static layer and animated city line
@@ -1753,7 +1310,7 @@
           ctx.font = '16px sans-serif';
           ctx.textBaseline = 'middle';
           ctx.fillStyle = color;
-          ctx.fillText('✈', bar.x + 6, bar.y);
+          ctx.fillText('\u2708', bar.x + 6, bar.y);
         });
         ctx.restore();
       }
@@ -1796,13 +1353,13 @@
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: ctx => `${data[ctx.dataIndex].km.toLocaleString()} ${I18N[currentLang].km_from_bergen}`
+                label: ctx => `${data[ctx.dataIndex].km.toLocaleString()} ${I18N.km_from_bergen}`
               }
             }
           },
           scales: {
             x: {
-              title: { display: true, text: I18N[currentLang].km_from_bergen },
+              title: { display: true, text: I18N.km_from_bergen },
               grid: { color: '#e5e5e0' },
               beginAtZero: true,
             },
@@ -1950,17 +1507,6 @@
     window.addEventListener('resize', () => {
       if (snowActive) initSnow();
     }, { passive: true });
-
-    // Language toggle
-    document.querySelectorAll('#langToggle span').forEach(s => {
-      s.addEventListener('click', () => setLang(s.dataset.lang));
-    });
-
-    // Auto-detect and apply language
-    const detectedLang = detectLang();
-    if (detectedLang === 'fr') {
-      setLang('fr');
-    }
 
     renderMap();
     setupParallax();
