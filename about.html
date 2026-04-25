@@ -448,7 +448,7 @@
 
     <h2>Tooling summary</h2>
     <p>
-      The technical implementation was built with <a href="https://claude.ai/claude-code">Claude Code</a>, following a harness-driven methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the Define&rarr;Find&rarr;Get&rarr;Verify&rarr;Clean&rarr;Analyse&rarr;Present framework that guided each step.
+      The technical implementation was built with <a href="https://claude.ai/claude-code">Claude Code</a>, following a harness-driven methodology: each task delegated to the LLM was bounded by a single pipeline phase, and its output was verified before moving to the next step. Every phase produced a verifiable artifact &mdash; a script, a dataset, a report &mdash; so the entire pipeline can be reproduced without any LLM involved, just by running the Python scripts in order. The methodological structure followed the <a href="https://civicliteraci.es/data-pipeline/">School of Data pipeline</a>, providing the framework that guided each step.
     </p>
     <p><strong>Data pipeline</strong> &mdash; five Python scripts, each handling one step:</p>
     <pre>fetch_data.py     &rarr; data/raw/           # Download from Open-Meteo API
