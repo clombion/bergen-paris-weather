@@ -464,7 +464,14 @@ export_for_web.py &rarr; site/data/          # Export JSON for the website</pre>
       <li>Vanilla JavaScript for i18n, animated transitions, and computed statistics</li>
     </ul>
     <p><strong>Publication</strong> &mdash; hosted on <a href="https://pages.github.com/">GitHub Pages</a>, served directly from the repository root. Source code at <a href="https://github.com/clombion/bergen-paris-weather">github.com/clombion/bergen-paris-weather</a>.</p>
-    <p><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data. Snow days defined as days with 5mm+ snowfall.</p>
+    <h2>Sources</h2>
+    <p><strong>Data source</strong> &mdash; <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5 / ECMWF IFS reanalysis), 3,653 days of daily data per city. Snow days defined as days with 5mm+ snowfall. Thermal comfort zone based on <a href="https://link.springer.com/article/10.1007/s00484-019-01694-1">Cheung &amp; Jim, 2019</a>.</p>
+    <p><strong>Project data</strong> &mdash; the raw API responses and cleaned horizon table are stored in the repository for reproducibility:</p>
+    <ul>
+      <li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/data/raw">data/raw/</a> &mdash; raw JSON from Open-Meteo (Bergen + Paris, 2016&ndash;2025)</li>
+      <li><a href="https://github.com/clombion/bergen-paris-weather/blob/main/data/clean/horizon.csv">data/clean/horizon.csv</a> &mdash; the merged horizon table (3,653 rows &times; 13 columns)</li>
+      <li><a href="https://github.com/clombion/bergen-paris-weather/tree/main/site/data">site/data/</a> &mdash; pre-computed JSON subsets powering the website charts</li>
+    </ul>
 
     <div class="footer">
       <p>
