@@ -151,6 +151,22 @@
       font-size: 0.98rem;
     }
 
+    .step-meta {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .step-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .footer {
       font-family: -apple-system, system-ui, sans-serif;
       font-size: 0.82rem;
@@ -320,16 +336,28 @@
     </ol>
 
     <h3>Find</h3>
+    <div class="step-meta">
+      <span>Method: desk research</span>
+      <span>Sources compared: 6</span>
+    </div>
     <p>
       Surveyed six data sources (Open-Meteo, Meteostat, Frost API, M&eacute;t&eacute;o-France, Visual Crossing, NOAA GSOD). Open-Meteo was the only one with all six required variables (temp mean/min/max, precipitation, snowfall, sunshine) for both cities at 100% completeness, with no API key needed.
     </p>
 
     <h3>Get</h3>
+    <div class="step-meta">
+      <span>Tool: Python (<code>fetch_data.py</code>)</span>
+      <span>API: <a href="https://open-meteo.com/" style="color:var(--muted)">Open-Meteo</a></span>
+    </div>
     <p>
       Fetched 3,653 days of daily data per city from the <a href="https://open-meteo.com/">Open-Meteo Historical Weather API</a> (ERA5/ECMWF IFS reanalysis). Zero gaps, zero nulls.
     </p>
 
     <h3>Verify</h3>
+    <div class="step-meta">
+      <span>Tool: Python (<code>verify_data.py</code>)</span>
+      <span>Cross-check: ERA5 vs ECMWF IFS models</span>
+    </div>
     <ul>
       <li><strong>Completeness</strong>: continuous date sequences, no missing values</li>
       <li><strong>Quality</strong>: no temperatures outside plausible climate records, no negative precipitation, no suspicious flat-line periods</li>
@@ -337,12 +365,23 @@
     </ul>
 
     <h3>Clean</h3>
+    <div class="step-meta">
+      <span>Tool: Python (<code>clean_data.py</code>)</span>
+      <span>Output: <code>data/clean/horizon.csv</code></span>
+    </div>
     <p>
       Merged both cities into a single horizon table (13 columns, daily granularity). Standardised units (sunshine to hours, snowfall to mm). Initially flagged extreme days (Paris max &gt;35&deg;C, Bergen min &lt;&minus;10&deg;C) but a sensitivity check showed removing them changed results by &lt;0.5&deg;C, so we dropped the filtering.
     </p>
 
 
     <h3>Analyse</h3>
+    <div class="step-meta">
+      <span>Tool: Python (<code>analyse.py</code>)</span>
+      <span>Methods: descriptive statistics, Pearson correlation, co-occurrence analysis</span>
+    </div>
+    <p>
+      The analysis tested each hypothesis using simple statistical methods: daily temperature differences and their distributions (H1), Pearson correlation with lag analysis (H2), and co-occurrence rates compared to chance baselines (H3, H4). No modelling or machine learning &mdash; the dataset is clean and the questions are straightforward enough for descriptive and inferential statistics.
+    </p>
 
     <table>
       <thead>
@@ -385,6 +424,12 @@
     </p>
 
     <h3>Present</h3>
+    <div class="step-meta">
+      <span>Tool: HTML / CSS / JavaScript</span>
+      <span>Charts: <a href="https://www.chartjs.org/" style="color:var(--muted)">Chart.js</a></span>
+      <span>Maps: <a href="https://github.com/topojson/topojson-client" style="color:var(--muted)">TopoJSON</a> + Canvas</span>
+      <span>Data export: Python (<code>export_for_web.py</code>)</span>
+    </div>
     <p>
       The goal was to help dispel a common misconception &mdash; especially among French people &mdash; that Norway is a country defined by snow and extreme cold. The site is structured in two parts: the <em>what</em> and the <em>why</em>.
     </p>
