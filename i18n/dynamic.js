@@ -15,6 +15,10 @@ module.exports = {
     stat_bergen_avg_when_paris_hot: 'Bergen avg when Paris >30\u00b0C',
     stat_comfort_pct: 'Summer days Bergen is cooler',
     km_from_bergen: 'km from Bergen',
+    region_northern: 'Northern',
+    region_western: 'Western',
+    region_central: 'Central',
+    region_southern: 'Southern',
   },
   fr: {
     stat_winter: '\u00c9cart hivernal (d\u00e9c\u2013f\u00e9v)',
@@ -32,5 +36,9 @@ module.exports = {
     stat_bergen_avg_when_paris_hot: 'Bergen moy. quand Paris >30\u00b0C',
     stat_comfort_pct: "Jours d'\u00e9t\u00e9 o\u00f9 Bergen est plus frais",
     km_from_bergen: 'km depuis Bergen',
+    region_northern: 'Nord',
+    region_western: 'Ouest',
+    region_central: 'Centre',
+    region_southern: 'Sud',
   },
 };

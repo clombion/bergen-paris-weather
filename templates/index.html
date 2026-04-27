@@ -207,6 +207,18 @@
       font-family: -apple-system, system-ui, sans-serif;
       font-size: 14px;
       color: var(--text);
+      font-weight: 400;
+      padding: 4px 8px;
+    }
+
+    .capital-select optgroup {
+      font-family: -apple-system, system-ui, sans-serif;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
     }
 
     #flightMap {
@@ -990,27 +1002,42 @@
 
     // --- Flight map and chart ---
     const TROMSO = { name: 'Tromsø', lon: 18.96, lat: 69.65 };
-    const CAPITALS = [
-      { name: 'Nice',       lon: 7.26,   lat: 43.70 },
-      { name: 'Lisbon',     lon: -9.14,  lat: 38.72 },
-      { name: 'Madrid',     lon: -3.70,  lat: 40.42 },
-      { name: 'Rome',       lon: 12.50,  lat: 41.90 },
-      { name: 'Athens',     lon: 23.73,  lat: 37.98 },
-      { name: 'London',     lon: -0.13,  lat: 51.51 },
-      { name: 'Dublin',     lon: -6.26,  lat: 53.35 },
-      { name: 'Amsterdam',  lon: 4.90,   lat: 52.37 },
-      { name: 'Brussels',   lon: 4.35,   lat: 50.85 },
-      { name: 'Berlin',     lon: 13.40,  lat: 52.52 },
-      { name: 'Prague',     lon: 14.44,  lat: 50.08 },
-      { name: 'Vienna',     lon: 16.37,  lat: 48.21 },
-      { name: 'Budapest',   lon: 19.04,  lat: 47.50 },
-      { name: 'Warsaw',     lon: 21.01,  lat: 52.23 },
-      { name: 'Copenhagen', lon: 12.57,  lat: 55.68 },
-      { name: 'Stockholm',  lon: 18.07,  lat: 59.33 },
-      { name: 'Helsinki',   lon: 24.94,  lat: 60.17 },
-      { name: 'Reykjavik',  lon: -21.94, lat: 64.15 },
-      { name: 'Bucharest',  lon: 26.10,  lat: 44.43 },
-    ].sort((a, b) => a.name.localeCompare(b.name));
+    const CAPITAL_GROUPS = [
+      { region: 'northern', capitals: [
+        { name: 'Copenhagen', lon: 12.57,  lat: 55.68 },
+        { name: 'Helsinki',   lon: 24.94,  lat: 60.17 },
+        { name: 'Reykjavik',  lon: -21.94, lat: 64.15 },
+        { name: 'Riga',       lon: 24.10,  lat: 56.95 },
+        { name: 'Stockholm',  lon: 18.07,  lat: 59.33 },
+        { name: 'Tallinn',    lon: 24.75,  lat: 59.44 },
+        { name: 'Vilnius',    lon: 25.28,  lat: 54.69 },
+      ]},
+      { region: 'western', capitals: [
+        { name: 'Amsterdam',  lon: 4.90,   lat: 52.37 },
+        { name: 'Bern',       lon: 7.45,   lat: 46.95 },
+        { name: 'Brussels',   lon: 4.35,   lat: 50.85 },
+        { name: 'Dublin',     lon: -6.26,  lat: 53.35 },
+        { name: 'Lisbon',     lon: -9.14,  lat: 38.72 },
+        { name: 'London',     lon: -0.13,  lat: 51.51 },
+        { name: 'Luxembourg', lon: 6.13,   lat: 49.61 },
+        { name: 'Madrid',     lon: -3.70,  lat: 40.42 },
+      ]},
+      { region: 'central', capitals: [
+        { name: 'Berlin',     lon: 13.40,  lat: 52.52 },
+        { name: 'Bratislava', lon: 17.11,  lat: 48.15 },
+        { name: 'Budapest',   lon: 19.04,  lat: 47.50 },
+        { name: 'Ljubljana',  lon: 14.51,  lat: 46.06 },
+        { name: 'Prague',     lon: 14.44,  lat: 50.08 },
+        { name: 'Vienna',     lon: 16.37,  lat: 48.21 },
+        { name: 'Warsaw',     lon: 21.01,  lat: 52.23 },
+      ]},
+      { region: 'southern', capitals: [
+        { name: 'Athens',     lon: 23.73,  lat: 37.98 },
+        { name: 'Bucharest',  lon: 26.10,  lat: 44.43 },
+        { name: 'Rome',       lon: 12.50,  lat: 41.90 },
+      ]},
+    ];
+    const CAPITALS = CAPITAL_GROUPS.flatMap(g => g.capitals);
 
     function haversineKm(lon1, lat1, lon2, lat2) {
       const R = 6371;
@@ -1032,18 +1059,23 @@
       const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
       flightMapData = await resp.json();
 
-      // Populate dropdown
+      // Populate dropdown grouped by region
       const sel = document.getElementById('capitalSelect');
-      CAPITALS.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.name;
-        opt.text = c.name;
-        if (c.name === 'Nice') opt.selected = true;
-        sel.appendChild(opt);
+      CAPITAL_GROUPS.forEach(g => {
+        const og = document.createElement('optgroup');
+        og.label = I18N['region_' + g.region];
+        g.capitals.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.name;
+          opt.text = c.name;
+          if (c.name === 'Riga') opt.selected = true;
+          og.appendChild(opt);
+        });
+        sel.appendChild(og);
       });
       sel.addEventListener('change', () => updateFlightSection(sel.value, true));
 
-      updateFlightSection('Nice', false);
+      updateFlightSection('Riga', false);
     }
 
     function updateFlightSection(capitalName, animate = true) {
@@ -1068,8 +1100,7 @@
 
     function updateDistanceSummary(capital, capitalKm) {
       const el = document.getElementById('distanceSummary');
-      const parisToCapital = Math.round(haversineKm(PARIS_COORD[0], PARIS_COORD[1], capital.lon, capital.lat));
-      el.innerHTML = I18N.dist_text(capital.name, capitalKm, TROMSO_KM, PARIS_KM, parisToCapital);
+      el.innerHTML = I18N.dist_text(capital.name, capitalKm, TROMSO_KM, PARIS_KM);
     }
 
     // Flight map with cached static layer and animated city line

@@ -30,66 +30,40 @@ const pages = [
 ];
 
 // dist_text functions for EN and FR — embedded in I18N JSON
-const distTextEn = `function(name, km, tKm, pKm, pToC) {
-  var tMins = Math.round(tKm / 800 * 60);
-  var tTime = tMins >= 120 ? (tMins/60).toFixed(1) + 'h' : tMins + ' min';
+const distTextEn = `function(name, km, tKm, pKm) {
   var s = 'Bergen to Troms\\u00f8 is ' + tKm.toLocaleString() + ' km \\u2014 about the same as Bergen to Paris (' + pKm.toLocaleString() + ' km). ';
-  if (Math.abs(km - tKm) < 150) {
-    s += 'For comparison, ' + name + ' is almost exactly the same distance (' + km.toLocaleString() + ' km) \\u2014 you\\u2019d travel as far to reach ' + name + ' as to reach Arctic Norway.';
-  } else if (km < tKm) {
-    s += 'For comparison, ' + name + ' is only ' + km.toLocaleString() + ' km away \\u2014 a shorter trip than to Norway\\u2019s own Arctic north.';
-  } else if (km < tKm * 2) {
-    s += 'For comparison, ' + name + ' is ' + km.toLocaleString() + ' km away \\u2014 not that much further than Troms\\u00f8.';
+  s += 'Most Northern and Western European capitals are closer to Bergen, or about as far. ';
+  if (km < tKm * 0.9) {
+    s += 'For example, ' + name + ' is ' + km.toLocaleString() + ' km from Bergen \\u2014 even closer than Troms\\u00f8.';
+  } else if (Math.abs(km - tKm) < 150) {
+    s += 'For example, ' + name + ' is ' + km.toLocaleString() + ' km from Bergen \\u2014 about the same as Bergen\\u2013Troms\\u00f8.';
   } else {
-    s += 'For comparison, even ' + name + ', at ' + km.toLocaleString() + ' km, is only ' + (km / tKm).toFixed(1) + '\\u00d7 the Bergen\\u2013Troms\\u00f8 distance.';
-  }
-  var pMins = Math.round(pToC / 800 * 60);
-  var pTime = pMins >= 120 ? Math.floor(pMins/60) + 'h and ' + (pMins%60) + ' min' : pMins + ' min';
-  var bpMins = Math.round(pKm / 800 * 60);
-  var ratio = pKm / pToC;
-  function ratioTextEn(r) {
-    if (r >= 1.8 && r <= 2.2) return 'twice as fast';
-    if (r >= 2.8 && r <= 3.2) return 'three times faster';
-    if (r >= 3.8 && r <= 4.2) return 'four times faster';
-    return 'about ' + r.toFixed(1) + '\\u00d7 faster';
-  }
-  if (ratio > 1.3) {
-    s += ' On the other hand, Paris\\u2013' + name + ' takes ' + pTime + ' by plane, ' + ratioTextEn(ratio) + ' than Paris\\u2013Bergen.';
-  } else if (pToC > pKm * 1.15) {
-    s += ' Interestingly, Paris\\u2013' + name + ' (' + pToC.toLocaleString() + ' km) is even longer than Paris\\u2013Bergen.';
-  } else {
-    s += ' Paris\\u2013' + name + ' is about the same distance as Paris\\u2013Bergen (' + pToC.toLocaleString() + ' km).';
+    var ratio = km / tKm;
+    var ratioText;
+    if (ratio >= 1.4 && ratio <= 1.6) ratioText = 'about 1.5\\u00d7 the Bergen\\u2013Troms\\u00f8 distance';
+    else if (ratio >= 1.8 && ratio <= 2.2) ratioText = 'twice the Bergen\\u2013Troms\\u00f8 distance';
+    else if (ratio >= 2.8 && ratio <= 3.2) ratioText = 'three times the Bergen\\u2013Troms\\u00f8 distance';
+    else ratioText = ratio.toFixed(1) + '\\u00d7 the Bergen\\u2013Troms\\u00f8 distance';
+    s += 'For example, ' + name + ' is ' + km.toLocaleString() + ' km from Bergen \\u2014 ' + ratioText + '.';
   }
   return s;
 }`;
 
-const distTextFr = `function(name, km, tKm, pKm, pToC) {
+const distTextFr = `function(name, km, tKm, pKm) {
   var s = 'Bergen\\u2013Troms\\u00f8 fait ' + tKm.toLocaleString('fr') + ' km \\u2014 \\u00e0 peu pr\\u00e8s autant que Bergen\\u2013Paris (' + pKm.toLocaleString('fr') + ' km). ';
-  if (Math.abs(km - tKm) < 150) {
-    s += 'En comparaison, ' + name + ' est presque \\u00e0 la m\\u00eame distance (' + km.toLocaleString('fr') + ' km) \\u2014 il faut voyager aussi loin pour atteindre ' + name + ' que pour rejoindre la Norv\\u00e8ge arctique.';
-  } else if (km < tKm) {
-    s += 'En comparaison, ' + name + " n'est qu'\\u00e0 " + km.toLocaleString('fr') + ' km \\u2014 un trajet plus court que vers le nord arctique de la Norv\\u00e8ge.';
-  } else if (km < tKm * 2) {
-    s += 'En comparaison, ' + name + ' est \\u00e0 ' + km.toLocaleString('fr') + ' km \\u2014 pas beaucoup plus loin que Troms\\u00f8.';
+  s += 'Depuis Bergen, la plupart des capitales d\\u2019Europe du Nord et de l\\u2019Ouest sont plus proches ou \\u00e0 peu pr\\u00e8s aussi loin. ';
+  if (km < tKm * 0.9) {
+    s += 'Par exemple, ' + name + ' est \\u00e0 ' + km.toLocaleString('fr') + ' km de Bergen \\u2014 encore plus proche que Troms\\u00f8.';
+  } else if (Math.abs(km - tKm) < 150) {
+    s += 'Par exemple, ' + name + ' est \\u00e0 ' + km.toLocaleString('fr') + ' km de Bergen \\u2014 \\u00e0 peu pr\\u00e8s autant que Bergen\\u2013Troms\\u00f8.';
   } else {
-    s += 'En comparaison, m\\u00eame ' + name + ', \\u00e0 ' + km.toLocaleString('fr') + ' km, ne repr\\u00e9sente que ' + (km / tKm).toFixed(1) + '\\u00d7 la distance Bergen\\u2013Troms\\u00f8.';
-  }
-  var pMins = Math.round(pToC / 800 * 60);
-  var pTime = pMins >= 120 ? Math.floor(pMins/60) + 'h et ' + (pMins%60) + ' min' : pMins + ' min';
-  var bpMins = Math.round(pKm / 800 * 60);
-  var ratio = pKm / pToC;
-  function ratioTextFr(r) {
-    if (r >= 1.8 && r <= 2.2) return 'deux fois plus rapide';
-    if (r >= 2.8 && r <= 3.2) return 'trois fois plus rapide';
-    if (r >= 3.8 && r <= 4.2) return 'quatre fois plus rapide';
-    return 'environ ' + r.toFixed(1) + '\\u00d7 plus rapide';
-  }
-  if (ratio > 1.3) {
-    s += " D'autre part, Paris\\u2013" + name + ' ne prend que ' + pTime + ' en avion, ' + ratioTextFr(ratio) + ' que Paris\\u2013Bergen.';
-  } else if (pToC > pKm * 1.15) {
-    s += ' Fait int\\u00e9ressant, Paris\\u2013' + name + ' (' + pToC.toLocaleString('fr') + ' km) est m\\u00eame plus long que Paris\\u2013Bergen.';
-  } else {
-    s += ' Paris\\u2013' + name + ' est \\u00e0 peu pr\\u00e8s la m\\u00eame distance que Paris\\u2013Bergen (' + pToC.toLocaleString('fr') + ' km).';
+    var ratio = km / tKm;
+    var ratioText;
+    if (ratio >= 1.4 && ratio <= 1.6) ratioText = 'environ 1,5\\u00d7 la distance Bergen\\u2013Troms\\u00f8';
+    else if (ratio >= 1.8 && ratio <= 2.2) ratioText = 'deux fois la distance Bergen\\u2013Troms\\u00f8';
+    else if (ratio >= 2.8 && ratio <= 3.2) ratioText = 'trois fois la distance Bergen\\u2013Troms\\u00f8';
+    else ratioText = ratio.toFixed(1).replace('.', ',') + '\\u00d7 la distance Bergen\\u2013Troms\\u00f8';
+    s += 'Par exemple, ' + name + ' est \\u00e0 ' + km.toLocaleString('fr') + ' km de Bergen \\u2014 ' + ratioText + '.';
   }
   return s;
 }`;
