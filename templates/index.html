@@ -364,7 +364,7 @@
         font-size: 0.95em;
       }
 
-      .highlight-box {
+      .callout {
         padding: 16px 20px;
         font-size: 0.95rem;
       }
@@ -388,8 +388,8 @@
     const I18N = {{I18N_JSON}};
 
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const BERGEN = '#2e6ea6';
-    const PARIS = '#c44e3f';
+    const BERGEN = '#6F4CB8';
+    const PARIS = '#B8843A';
 
 
     let dailyData, monthlyData, yearMonthData, surprisesData;
@@ -707,24 +707,24 @@
             const abs = Math.abs(val);
             let bg, fg;
             if (val > 0) {
-              // Bergen warmer — blue
+              // Bergen warmer — purple
               const t = Math.min(val / 3, 1);
-              bg = `rgba(46, 110, 166, ${t * 0.55 + 0.15})`;
+              bg = `rgba(111, 76, 184, ${t * 0.55 + 0.15})`;
               fg = t > 0.4 ? '#fff' : '#1a1a1a';
             } else if (abs <= 1) {
               // Nearly identical — almost white
-              bg = `rgba(196, 78, 63, 0.04)`;
+              bg = `rgba(184, 132, 58, 0.04)`;
               fg = '#1a1a1a';
             } else if (abs <= 2) {
-              bg = `rgba(196, 78, 63, 0.08)`;
+              bg = `rgba(184, 132, 58, 0.08)`;
               fg = '#1a1a1a';
             } else if (abs <= 3) {
-              bg = `rgba(196, 78, 63, 0.14)`;
+              bg = `rgba(184, 132, 58, 0.14)`;
               fg = '#1a1a1a';
             } else {
               // Bigger gap — progressively deeper
               const t = Math.min((abs - 3) / 7, 1);
-              bg = `rgba(196, 78, 63, ${t * 0.45 + 0.18})`;
+              bg = `rgba(184, 132, 58, ${t * 0.45 + 0.18})`;
               fg = t > 0.5 ? '#fff' : '#1a1a1a';
             }
 
@@ -951,8 +951,8 @@
         ctx.fillText(label, x, above ? y - 14 : y + 20);
       }
 
-      drawCity(BERGEN_COORD, '#2e6ea6', 'Bergen', true);
-      drawCity(PARIS_COORD, '#c44e3f', 'Paris', false);
+      drawCity(BERGEN_COORD, '#6F4CB8', 'Bergen', true);
+      drawCity(PARIS_COORD, '#B8843A', 'Paris', false);
 
       // Radial fade mask: clear outside a circle
       // Distance between cities in pixels for sizing

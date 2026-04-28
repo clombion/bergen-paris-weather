@@ -15,7 +15,7 @@ A little side project by [Cédric Lombion](https://linkedin.com/in/cedriclombion
 
 {% /header %}
 
-{% legend /%}
+{% legend items="Bergen:#6F4CB8,Paris:#B8843A" /%}
 
 {% section %}
 
@@ -33,7 +33,7 @@ Average monthly temperatures over 2016–2025. In summer, Paris pulls ahead by 6
 
 ## A decade, month by month
 
-Each cell shows how much colder Bergen was than Paris. The lighter the cell, the closer they were. Blue means Bergen was warmer. {% .lead %}
+Each cell shows how much colder Bergen was than Paris. The lighter the cell, the closer they were. Purple means Bergen was warmer. {% .lead %}
 
 {% heatmap /%}
 

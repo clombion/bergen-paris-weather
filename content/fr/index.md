@@ -15,7 +15,7 @@ Un petit projet perso de [Cédric Lombion](https://linkedin.com/in/cedriclombion
 
 {% /header %}
 
-{% legend /%}
+{% legend items="Bergen:#6F4CB8,Paris:#B8843A" /%}
 
 {% section %}
 
@@ -33,7 +33,7 @@ Températures moyennes mensuelles sur 2016–2025. En été, Paris prend 6°C d'
 
 ## Une décennie, mois par mois
 
-Chaque cellule indique de combien Bergen était plus froide que Paris. Plus la cellule est claire, plus les températures étaient proches. Une cellule bleue signifie que Bergen était plus chaude. {% .lead %}
+Chaque cellule montre l'écart de température entre Bergen et Paris. Plus la cellule est claire, plus les températures étaient proches. Une cellule violette signifie que Bergen était plus chaude. {% .lead %}
 
 {% heatmap /%}
 
@@ -55,7 +55,7 @@ Une température plus basse est un désavantage en hiver — mais en été, c'es
 
 ## Elles bougent ensemble
 
-Quand une vague de froid balaie l'Europe, les deux villes le ressentent. Au jour le jour, leurs températures évoluent en phase 81% du temps. Mois par mois, la concordance atteint 94%. {% .lead %}
+Quand une vague de froid balaie l'Europe, les deux villes la ressentent. Au jour le jour, leurs températures évoluent en phase 81 % du temps. Mois par mois, la concordance atteint 94 %. {% .lead %}
 
 {% stats id="corrStats" classes="stat-grid-2" /%}
 
@@ -69,7 +69,7 @@ Quand une vague de froid balaie l'Europe, les deux villes le ressentent. Au jour
 
 ## Les jours de neige à Bergen sont plus doux qu'on ne le pense
 
-Bergen connaît des chutes de neige notables 14% des jours, principalement de novembre à mars. Mais ce n'est pas le froid arctique. La température moyenne d'un jour de neige à Bergen est de 1,5°C — près de huit jours de neige sur dix sont au-dessus de zéro. Ces mêmes jours, Tromsø — la plus grande ville norvégienne au-dessus du cercle polaire, celle des nuits polaires et des aurores boréales — affiche -5,1°C en moyenne. {% .lead %}
+Bergen connaît des chutes de neige notables 14 % des jours, principalement de novembre à mars. Mais ce n'est pas le froid arctique. La température moyenne d'un jour de neige à Bergen est de 1,5°C — près de huit jours de neige sur dix sont au-dessus de zéro. Ces mêmes jours, Tromsø — la plus grande ville norvégienne au-dessus du cercle polaire, celle des nuits polaires et des aurores boréales — affiche -5,1°C en moyenne. {% .lead %}
 
 {% stats id="snowStats" /%}
 
@@ -83,7 +83,7 @@ Même lors de ses jours les plus enneigés, Bergen est plus proche de Paris que 
 
 ## La Norvège à laquelle vous pensez est très loin de Bergen
 
-Quand on entend « Norvège », on imagine l'Arctique — ours polaires, aurores boréales, glace à perte de vue. Mais c'est Tromsø et le Grand Nord, la capitale arctique de la Norvège, à 1 200 km de Bergen. Bergen se trouve sur la côte sud-ouest, réchauffée par le Gulf Stream, plus proche de la Méditerranée que de l'Arctique. {% .lead %}
+Quand on entend « Norvège », on imagine l'Arctique — ours polaires, aurores boréales, glace à perte de vue. Mais cette image, c'est plutôt celle du Grand Nord. C'est là que l'on trouve Tromsø, la capitale arctique de la Norvège, à 1 200 km de Bergen. Bergen se trouve sur la côte sud-ouest, réchauffée par le Gulf Stream, plus proche de la Méditerranée que de l'Arctique. {% .lead %}
 
 {% flight-map /%}
 
@@ -105,6 +105,6 @@ Le Gulf Stream transporte des eaux atlantiques chaudes le long de la côte ouest
 
 Données météorologiques quotidiennes provenant de l'**API Open-Meteo Historical Weather** (réanalyse ERA5 / ECMWF IFS), couvrant du 1er janvier 2016 au 31 décembre 2025 (3 653 jours). Coordonnées Bergen : 60,39°N, 5,32°E. Paris : 48,86°N, 2,35°E.
 
-Vérifié par croisement avec le modèle ECMWF IFS ; les données de Paris concordent à 1°C près sur 94% des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire. Jours de neige définis comme jours avec 5mm+ de chutes de neige.
+Vérifié par croisement avec le modèle ECMWF IFS ; les données de Paris concordent à 1°C près sur 94 % des jours. Bergen présente une incertitude de ~1,6°C entre modèles — noté mais non rédhibitoire. Jours de neige définis comme jours avec 5mm+ de chutes de neige.
 
 {% /methodology %}
