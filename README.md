@@ -92,7 +92,7 @@ Content lives in Markdown files (`content/en/`, `content/fr/`) using [Markdoc](h
 
 ```bash
 pnpm install
-node build.js
+pnpm run build
 ```
 
 The build outputs to `dist/`. To preview locally:

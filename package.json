@@ -2,10 +2,11 @@
   "name": "weather-comparison",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "build.ts",
   "scripts": {
-    "build": "node build.js",
-    "dev": "node build.js && pnpm exec serve dist"
+    "build": "tsx build.ts",
+    "dev": "tsx build.ts && pnpm exec serve dist"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,8 @@
   "dependencies": {
     "@markdoc/markdoc": "^0.5.7",
     "js-yaml": "^4.1.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

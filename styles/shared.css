@@ -41,7 +41,7 @@ body {
   background-position: 0 90%;
 }
 
-.highlight-box {
+.callout {
   background: var(--highlight);
   border-radius: 8px;
   padding: 24px 28px;
@@ -103,7 +103,7 @@ body {
   border-radius: 4px;
 }
 
-/* --- Tag component styles (from markdoc/tags.js) --- */
+/* --- Tag component styles (from markdoc/tags.ts) --- */
 
 .year-slider-wrapper {
   margin-top: 16px;

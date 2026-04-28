@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   en: {
     stat_winter: 'Winter gap (Dec\u2013Feb)',
     stat_summer: 'Summer gap (Jun\u2013Aug)',
