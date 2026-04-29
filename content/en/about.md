@@ -3,7 +3,7 @@ title: "About — Bergen vs Paris"
 template: about
 ---
 
-[← Back to the site](/)
+[← Back to the site](./)
 
 # Bergen vs Paris Weather Comparison
 

@@ -3,7 +3,7 @@ title: "Comparaison météo Bergen vs Paris"
 template: about
 ---
 
-[← Retour au site](/)
+[← Retour au site](./)
 
 # Comparaison météo Bergen vs Paris
 
