@@ -80,9 +80,12 @@ def format_temp(t: float) -> str:
     return f"{round(t)}°C"
 
 
+# All comfort logic ranks by distance from the 20–25°C thermal comfort
+# zone. Smaller distance = closer to ideal. The winner is the city with
+# the smaller distance, declared only when the distance gap exceeds 3°.
+# When tied, the framing depends on which side of the zone both sit on.
 COMFORT_LOW = 20.0
 COMFORT_HIGH = 25.0
-COLD_BELOW = 10.0
 DIFF_THRESHOLD = 3.0
 PLEASANT_DISTANCE = 1.0
 
@@ -97,48 +100,43 @@ def comfort_distance(t: float) -> float:
 
 
 def qualitative(bergen_t: float, paris_t: float) -> tuple[str, str]:
-    """Short verdict: who feels better right now, or do both feel the same?
+    """Short verdict on which city's weather feels better right now."""
+    bd = comfort_distance(bergen_t)
+    pd = comfort_distance(paris_t)
 
-    Both cold (<10°C in both cities) → compare raw temps and say which feels
-    colder. Otherwise compare distance to the 20–25°C comfort zone. A
-    winner is only declared when the gap exceeds 3°.
-    """
-    if bergen_t < COLD_BELOW and paris_t < COLD_BELOW:
-        gap = abs(bergen_t - paris_t)
-        if gap <= DIFF_THRESHOLD:
+    if abs(bd - pd) <= DIFF_THRESHOLD:
+        # Tied on comfort — choose the framing that matches both cities' state.
+        if bd <= PLEASANT_DISTANCE and pd <= PLEASANT_DISTANCE:
             return (
-                "The weather feels the same in both",
-                "Il fait pareil dans les deux villes",
+                "The weather is pleasant in both",
+                "Il fait bon dans les deux villes",
             )
-        colder = "Bergen" if bergen_t < paris_t else "Paris"
+        if bergen_t < COMFORT_LOW and paris_t < COMFORT_LOW:
+            return (
+                "The weather is cold in both",
+                "Il fait froid dans les deux villes",
+            )
+        if bergen_t > COMFORT_HIGH and paris_t > COMFORT_HIGH:
+            return (
+                "The weather is hot in both",
+                "Il fait chaud dans les deux villes",
+            )
         return (
-            f"The weather feels colder in {colder}",
-            f"Il fait plus froid à {colder}",
+            "The weather feels the same in both",
+            "Il fait pareil dans les deux villes",
         )
 
-    bergen_d = comfort_distance(bergen_t)
-    paris_d = comfort_distance(paris_t)
-
-    # Decisive winner first — a clear gap overrides "both pleasant" because
-    # one city is meaningfully closer to ideal than the other.
-    if abs(bergen_d - paris_d) > DIFF_THRESHOLD:
-        winner = "Bergen" if bergen_d < paris_d else "Paris"
+    # One city is decisively closer to ideal — describe what's wrong with
+    # the loser. The loser is always outside the zone (winner has lower d).
+    loser, loser_t = ("Paris", paris_t) if bd < pd else ("Bergen", bergen_t)
+    if loser_t > COMFORT_HIGH:
         return (
-            f"The weather is more enjoyable in {winner}",
-            f"Il fait meilleur à {winner}",
+            f"The weather feels hotter in {loser}",
+            f"Il fait plus chaud à {loser}",
         )
-
-    # Tie, but both within (or very near) the comfort zone — call it pleasant.
-    if bergen_d <= PLEASANT_DISTANCE and paris_d <= PLEASANT_DISTANCE:
-        return (
-            "The weather is pleasant in both",
-            "Il fait bon dans les deux villes",
-        )
-
-    # Tie, but neither is close to ideal — both feel similarly off.
     return (
-        "The weather feels the same in both",
-        "Il fait pareil dans les deux villes",
+        f"The weather feels colder in {loser}",
+        f"Il fait plus froid à {loser}",
     )
 
 
