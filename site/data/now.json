@@ -1,5 +1,17 @@
 {
-  "updated": "1970-01-01T00:00:00Z",
-  "items": {},
-  "summary": {"en": "", "fr": ""}
+  "updated": "2026-04-30T22:53:54Z",
+  "items": {
+    "Bergen": {
+      "value": "6°C",
+      "icon": "☀"
+    },
+    "Paris": {
+      "value": "16°C",
+      "icon": "🌤"
+    }
+  },
+  "summary": {
+    "en": "10°C gap today — larger than the decade average of 5°C",
+    "fr": "Écart de 10°C aujourd'hui — plus grand que la moyenne décennale de 5°C"
+  }
 }
