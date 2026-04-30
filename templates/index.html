@@ -82,6 +82,29 @@
       display: inline-block;
     }
 
+    .live-legend {
+      flex-wrap: wrap;
+    }
+    .live-legend .legend-item {
+      gap: 6px;
+    }
+    .live-legend .live-icon {
+      font-size: 1.05em;
+      line-height: 1;
+    }
+    .live-legend .live-value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .live-legend .live-summary {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
     section {
       margin: 56px 0;
     }
@@ -382,6 +405,9 @@
   <div class="container">
     {{CONTENT}}
   </div>
+
+  <script>window.__dataBase = '{{DATA_BASE}}';</script>
+  <script src="{{JS_BASE}}live-legend.js" defer></script>
 
   <script>
     const LANG = '{{LANG}}';

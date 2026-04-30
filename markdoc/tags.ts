@@ -315,6 +315,7 @@ export const tags = {
   chart: shared.chart,
   stats: shared.stats,
   legend: shared.legend,
+  "live-legend": shared.liveLegend,
   // Weather-specific local tags
   heatmap,
   "year-slider": yearSlider,

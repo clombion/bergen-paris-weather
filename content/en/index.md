@@ -15,7 +15,7 @@ A little side project by [Cédric Lombion](https://linkedin.com/in/cedriclombion
 
 {% /header %}
 
-{% legend items="Bergen:#6F4CB8,Paris:#B8843A" /%}
+{% live-legend items="Bergen:#6F4CB8,Paris:#B8843A" /%}
 
 {% section %}
 

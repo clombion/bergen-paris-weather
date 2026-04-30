@@ -189,6 +189,15 @@ function getStylesBase(outputPath: string): string {
   return rel;
 }
 
+function getJsBase(outputPath: string): string {
+  const outputDir = path.dirname(outputPath);
+  const jsDir = path.join("dist", "site", "js");
+  let rel = path.relative(outputDir, jsDir);
+  rel = rel.replace(/\\/g, "/");
+  if (!rel.endsWith("/")) rel += "/";
+  return rel;
+}
+
 function mkdirp(dir: string): void {
   fs.mkdirSync(dir, { recursive: true });
 }
@@ -272,6 +281,7 @@ for (const page of pages) {
   const toc = isAbout ? buildToc(ast) : "";
   const dataBase = getDataBase(page.output);
   const stylesBase = getStylesBase(page.output);
+  const jsBase = getJsBase(page.output);
   const i18nJson = isIndex ? buildI18nJson(page.lang) : "{}";
   const footer = labels[page.lang].footer;
   const backTopText = labels[page.lang].backTop;
@@ -286,6 +296,7 @@ for (const page of pages) {
   html = html.replace(/\{\{TOC\}\}/g, toc);
   html = html.replace(/\{\{DATA_BASE\}\}/g, dataBase);
   html = html.replace(/\{\{STYLES_BASE\}\}/g, stylesBase);
+  html = html.replace(/\{\{JS_BASE\}\}/g, jsBase);
   html = html.replace(/\{\{I18N_JSON\}\}/g, i18nJson);
   html = html.replace(/\{\{FOOTER\}\}/g, footer);
   html = html.replace(/\{\{BACK_TOP_TEXT\}\}/g, backTopText);
@@ -318,6 +329,21 @@ if (fs.existsSync(stylesSrc)) {
   console.log(`  copied: styles/ -> dist/styles/`);
 } else {
   console.warn("  warn: styles/ not found, skipping styles copy");
+}
+
+const liveLegendSrc = path.resolve(
+  "vendor",
+  "markdoc-tags",
+  "src",
+  "live-legend.client.js",
+);
+const liveLegendDest = path.resolve("dist", "site", "js", "live-legend.js");
+if (fs.existsSync(liveLegendSrc)) {
+  mkdirp(path.dirname(liveLegendDest));
+  fs.copyFileSync(liveLegendSrc, liveLegendDest);
+  console.log(`  copied: ${path.relative(process.cwd(), liveLegendSrc)} -> ${path.relative(process.cwd(), liveLegendDest)}`);
+} else {
+  console.warn("  warn: live-legend.client.js not found, skipping");
 }
 
 console.log(`\nDone: ${built} pages built, ${skipped} skipped.`);

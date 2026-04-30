@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, data]
 
 permissions:
   contents: read
@@ -19,8 +19,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           submodules: true
           token: ${{ secrets.MARKDOC_TAGS_TOKEN }}
+
+      - name: Merge weather snapshot from data branch
+        run: |
+          mkdir -p site/data
+          if git fetch origin data --depth=1 2>/dev/null && \
+             git show origin/data:site/data/now.json > site/data/now.json 2>/dev/null; then
+            echo "merged now.json from data branch"
+          else
+            echo "data branch or now.json not found — bare legend will render"
+            rm -f site/data/now.json
+          fi
 
       - uses: pnpm/action-setup@v4
 

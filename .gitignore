@@ -1,2 +1,6 @@
 node_modules/
 dist/
+
+# Live weather snapshot — written by scripts/refresh_now.py and merged
+# from the `data` branch at deploy time. Local hand-edits stay local.
+site/data/now.json

@@ -1,0 +1,49 @@
+name: Refresh weather snapshot
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-weather
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Refresh and commit to data branch
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin data --depth=1
+          git worktree add -B data /tmp/data-branch origin/data
+
+          (
+            cd /tmp/data-branch
+            python "$GITHUB_WORKSPACE/scripts/refresh_now.py" site/data/now.json
+
+            if git diff --quiet -- site/data/now.json; then
+              echo "no changes"
+              exit 0
+            fi
+
+            git add site/data/now.json
+            git commit -m "data: refresh weather snapshot"
+            git push origin data
+          )
