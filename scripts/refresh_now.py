@@ -80,13 +80,63 @@ def format_temp(t: float) -> str:
     return f"{round(t)}°C"
 
 
-def summary_strings(bergen_t: float, paris_t: float) -> dict:
+COMFORT_LOW = 20.0
+COMFORT_HIGH = 25.0
+COLD_BELOW = 10.0
+DIFF_THRESHOLD = 3.0
+
+
+def comfort_distance(t: float) -> float:
+    """Distance from the 20–25°C thermal comfort zone (0 if inside)."""
+    if t < COMFORT_LOW:
+        return COMFORT_LOW - t
+    if t > COMFORT_HIGH:
+        return t - COMFORT_HIGH
+    return 0.0
+
+
+def qualitative(bergen_t: float, paris_t: float) -> tuple[str, str]:
+    """Short verdict: who feels better right now, or do both feel the same?
+
+    Both cold (<10°C in both cities) → compare raw temps and say which feels
+    colder. Otherwise compare distance to the 20–25°C comfort zone. A
+    winner is only declared when the gap exceeds 3°.
+    """
+    if bergen_t < COLD_BELOW and paris_t < COLD_BELOW:
+        gap = abs(bergen_t - paris_t)
+        if gap <= DIFF_THRESHOLD:
+            return (
+                "The weather feels the same in both",
+                "Il fait pareil dans les deux villes",
+            )
+        colder = "Bergen" if bergen_t < paris_t else "Paris"
+        return (
+            f"The weather feels colder in {colder}",
+            f"Il fait plus froid à {colder}",
+        )
+
+    bergen_d = comfort_distance(bergen_t)
+    paris_d = comfort_distance(paris_t)
+    if abs(bergen_d - paris_d) <= DIFF_THRESHOLD:
+        return (
+            "The weather feels the same in both",
+            "Il fait pareil dans les deux villes",
+        )
+    winner = "Bergen" if bergen_d < paris_d else "Paris"
+    return (
+        f"The weather is more enjoyable in {winner}",
+        f"Il fait meilleur à {winner}",
+    )
+
+
+def quantitative(bergen_t: float, paris_t: float) -> tuple[str, str]:
+    """Numeric description of the gap and how it compares to decade average."""
     delta = paris_t - bergen_t
     if delta < 0:
-        return {
-            "en": "Bergen is warmer than Paris today",
-            "fr": "Bergen est plus chaud que Paris aujourd'hui",
-        }
+        return (
+            "Bergen is warmer than Paris today",
+            "Bergen est plus chaud que Paris aujourd'hui",
+        )
     rounded = round(abs(delta))
     if abs(delta) < 4:
         en_tail = "smaller than the decade average of 5°C"
@@ -97,9 +147,18 @@ def summary_strings(bergen_t: float, paris_t: float) -> dict:
     else:
         en_tail = "larger than the decade average of 5°C"
         fr_tail = "plus grand que la moyenne décennale de 5°C"
+    return (
+        f"{rounded}°C gap today — {en_tail}",
+        f"Écart de {rounded}°C aujourd'hui — {fr_tail}",
+    )
+
+
+def summary_strings(bergen_t: float, paris_t: float) -> dict:
+    qual_en, qual_fr = qualitative(bergen_t, paris_t)
+    quant_en, quant_fr = quantitative(bergen_t, paris_t)
     return {
-        "en": f"{rounded}°C gap today — {en_tail}",
-        "fr": f"Écart de {rounded}°C aujourd'hui — {fr_tail}",
+        "en": f"{qual_en}. {quant_en}",
+        "fr": f"{qual_fr}. {quant_fr}",
     }
 
 
