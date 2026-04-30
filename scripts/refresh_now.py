@@ -19,24 +19,49 @@ CITIES = [
     {"name": "Paris", "lat": 48.86, "lon": 2.35},
 ]
 
+# WMO weather code → emoji. Codes that map to a single Unicode codepoint
+# in the BMP (☀ ☁ ❄ ⛅ ⛈) need VS-16 (️) appended to force emoji
+# presentation; without it they render as monochrome text glyphs.
+SUN = "☀️"
+CLOUD = "☁️"
+SNOW_BMP = "❄️"
+PARTLY = "⛅"
+PARTLY_DAY = "\U0001f324️"  # 🌤️ — emoji default, but VS-16 is harmless
+THUNDER = "⛈️"
+MOON = "\U0001f319"
+FOG = "\U0001f32b️"
+DRIZZLE = "\U0001f326️"
+RAIN = "\U0001f327️"
+SNOW = "\U0001f328️"
+
+# Day-only codes: same icon regardless of is_day. The codes that vary
+# between day and night (clear / mainly clear / partly cloudy) are
+# handled in icon_for().
 WMO_ICON = {
-    0: "☀",
-    1: "\U0001f324", 2: "⛅", 3: "☁",
-    45: "\U0001f32b", 48: "\U0001f32b",
-    51: "\U0001f326", 53: "\U0001f326", 55: "\U0001f327",
-    56: "\U0001f327", 57: "\U0001f327",
-    61: "\U0001f326", 63: "\U0001f327", 65: "\U0001f327",
-    66: "\U0001f327", 67: "\U0001f327",
-    71: "\U0001f328", 73: "\U0001f328", 75: "❄",
-    77: "\U0001f328",
-    80: "\U0001f326", 81: "\U0001f327", 82: "⛈",
-    85: "\U0001f328", 86: "\U0001f328",
-    95: "⛈", 96: "⛈", 99: "⛈",
+    3: CLOUD,
+    45: FOG, 48: FOG,
+    51: DRIZZLE, 53: DRIZZLE, 55: RAIN,
+    56: RAIN, 57: RAIN,
+    61: DRIZZLE, 63: RAIN, 65: RAIN,
+    66: RAIN, 67: RAIN,
+    71: SNOW, 73: SNOW, 75: SNOW_BMP,
+    77: SNOW,
+    80: DRIZZLE, 81: RAIN, 82: THUNDER,
+    85: SNOW, 86: SNOW,
+    95: THUNDER, 96: THUNDER, 99: THUNDER,
 }
 
 
-def icon_for(code: int) -> str:
-    return WMO_ICON.get(int(code), "•")
+def icon_for(code: int, is_day: int) -> str:
+    code = int(code)
+    night = not is_day
+    if code == 0:
+        return MOON if night else SUN
+    if code == 1:
+        return MOON if night else PARTLY_DAY
+    if code == 2:
+        return CLOUD if night else PARTLY
+    return WMO_ICON.get(code, "•")
 
 
 def fetch_current() -> list[dict]:
@@ -45,7 +70,7 @@ def fetch_current() -> list[dict]:
     url = (
         "https://api.open-meteo.com/v1/forecast"
         f"?latitude={lats}&longitude={lons}"
-        "&current=temperature_2m,weather_code&timezone=auto"
+        "&current=temperature_2m,weather_code,is_day&timezone=auto"
     )
     with urllib.request.urlopen(url, timeout=30) as resp:
         return json.loads(resp.read().decode())
@@ -85,7 +110,7 @@ def build_snapshot(api_data: list[dict]) -> dict:
         cur = entry["current"]
         items[city["name"]] = {
             "value": format_temp(cur["temperature_2m"]),
-            "icon": icon_for(cur["weather_code"]),
+            "icon": icon_for(cur["weather_code"], cur.get("is_day", 1)),
         }
         temps[city["name"]] = cur["temperature_2m"]
 
