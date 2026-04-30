@@ -84,6 +84,7 @@ COMFORT_LOW = 20.0
 COMFORT_HIGH = 25.0
 COLD_BELOW = 10.0
 DIFF_THRESHOLD = 3.0
+PLEASANT_DISTANCE = 1.0
 
 
 def comfort_distance(t: float) -> float:
@@ -117,15 +118,27 @@ def qualitative(bergen_t: float, paris_t: float) -> tuple[str, str]:
 
     bergen_d = comfort_distance(bergen_t)
     paris_d = comfort_distance(paris_t)
-    if abs(bergen_d - paris_d) <= DIFF_THRESHOLD:
+
+    # Decisive winner first — a clear gap overrides "both pleasant" because
+    # one city is meaningfully closer to ideal than the other.
+    if abs(bergen_d - paris_d) > DIFF_THRESHOLD:
+        winner = "Bergen" if bergen_d < paris_d else "Paris"
         return (
-            "The weather feels the same in both",
-            "Il fait pareil dans les deux villes",
+            f"The weather is more enjoyable in {winner}",
+            f"Il fait meilleur à {winner}",
         )
-    winner = "Bergen" if bergen_d < paris_d else "Paris"
+
+    # Tie, but both within (or very near) the comfort zone — call it pleasant.
+    if bergen_d <= PLEASANT_DISTANCE and paris_d <= PLEASANT_DISTANCE:
+        return (
+            "The weather is pleasant in both",
+            "Il fait bon dans les deux villes",
+        )
+
+    # Tie, but neither is close to ideal — both feel similarly off.
     return (
-        f"The weather is more enjoyable in {winner}",
-        f"Il fait meilleur à {winner}",
+        "The weather feels the same in both",
+        "Il fait pareil dans les deux villes",
     )
 
 
