@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: refresh-weather
@@ -25,6 +26,8 @@ jobs:
           python-version: "3.13"
 
       - name: Refresh and commit to data branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
@@ -34,16 +37,18 @@ jobs:
           git fetch origin data --depth=1
           git worktree add -B data /tmp/data-branch origin/data
 
-          (
-            cd /tmp/data-branch
-            python "$GITHUB_WORKSPACE/scripts/refresh_now.py" site/data/now.json
+          cd /tmp/data-branch
+          python "$GITHUB_WORKSPACE/scripts/refresh_now.py" site/data/now.json
 
-            if git diff --quiet -- site/data/now.json; then
-              echo "no changes"
-              exit 0
-            fi
+          if git diff --quiet -- site/data/now.json; then
+            echo "snapshot unchanged — no commit, no deploy"
+            exit 0
+          fi
 
-            git add site/data/now.json
-            git commit -m "data: refresh weather snapshot"
-            git push origin data
-          )
+          git add site/data/now.json
+          git commit -m "data: refresh weather snapshot"
+          git push origin data
+
+          # The data branch has no workflow files, so its push doesn't
+          # trigger deploy.yml on its own. Dispatch the deploy explicitly.
+          gh workflow run deploy.yml --ref main
