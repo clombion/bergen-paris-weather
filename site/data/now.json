@@ -1,17 +1,17 @@
 {
-  "updated": "2026-05-01T07:27:56Z",
+  "updated": "2026-05-01T09:50:59Z",
   "items": {
     "Bergen": {
-      "value": "12°C",
+      "value": "16°C",
       "icon": "☀️"
     },
     "Paris": {
-      "value": "13°C",
-      "icon": "⛅"
+      "value": "19°C",
+      "icon": "🌤️"
     }
   },
   "summary": {
-    "en": "The weather is cold in both. 1°C gap today — smaller than the decade average of 5°C",
-    "fr": "Il fait froid dans les deux villes. Écart de 1°C aujourd'hui — plus faible que la moyenne décennale de 5°C"
+    "en": "The weather feels colder in Bergen. 3°C gap today — smaller than the decade average of 5°C",
+    "fr": "Il fait plus froid à Bergen. Écart de 3°C aujourd'hui — plus faible que la moyenne décennale de 5°C"
   }
 }
