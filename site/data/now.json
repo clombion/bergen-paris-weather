@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-02T13:22:52Z",
+  "updated": "2026-05-02T14:53:36Z",
   "items": {
     "Bergen": {
-      "value": "11°C",
+      "value": "10°C",
       "icon": "☁️"
     },
     "Paris": {
-      "value": "25°C",
-      "icon": "⛅"
+      "value": "26°C",
+      "icon": "☁️"
     }
   },
   "summary": {
