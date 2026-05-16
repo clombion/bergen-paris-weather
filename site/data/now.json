@@ -1,17 +1,17 @@
 {
-  "updated": "2026-05-16T00:01:59Z",
+  "updated": "2026-05-16T04:31:22Z",
   "items": {
     "Bergen": {
       "value": "11°C",
-      "icon": "☁️"
+      "icon": "⛅"
     },
     "Paris": {
-      "value": "9°C",
-      "icon": "☁️"
+      "value": "8°C",
+      "icon": "🌤️"
     }
   },
   "summary": {
-    "en": "The weather is cold in both. Bergen is warmer than Paris today",
-    "fr": "Il fait froid dans les deux villes. Bergen est plus chaud que Paris aujourd'hui"
+    "en": "The weather feels colder in Paris. Bergen is warmer than Paris today",
+    "fr": "Il fait plus froid à Paris. Bergen est plus chaud que Paris aujourd'hui"
   }
 }
