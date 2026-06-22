@@ -1,17 +1,17 @@
 {
-  "updated": "2026-06-22T17:41:27Z",
+  "updated": "2026-06-22T20:53:55Z",
   "items": {
     "Bergen": {
-      "value": "17°C",
-      "icon": "🌤️"
+      "value": "13°C",
+      "icon": "⛅"
     },
     "Paris": {
-      "value": "36°C",
-      "icon": "☀️"
+      "value": "32°C",
+      "icon": "🌙"
     }
   },
   "summary": {
-    "en": "The weather feels hotter in Paris. 19°C gap today — larger than the decade average of 5°C",
-    "fr": "Il fait plus chaud à Paris. Écart de 19°C aujourd'hui — plus grand que la moyenne décennale de 5°C"
+    "en": "The weather feels the same in both. 19°C gap today — larger than the decade average of 5°C",
+    "fr": "Il fait pareil dans les deux villes. Écart de 19°C aujourd'hui — plus grand que la moyenne décennale de 5°C"
   }
 }
