@@ -1,17 +1,17 @@
 {
-  "updated": "2026-07-01T09:57:41Z",
+  "updated": "2026-07-01T12:40:48Z",
   "items": {
     "Bergen": {
-      "value": "18°C",
-      "icon": "🌦️"
+      "value": "20°C",
+      "icon": "⛅"
     },
     "Paris": {
-      "value": "22°C",
-      "icon": "☁️"
+      "value": "25°C",
+      "icon": "⛅"
     }
   },
   "summary": {
-    "en": "The weather feels the same in both. 4°C gap today — about the same as the decade average of 5°C",
-    "fr": "Il fait pareil dans les deux villes. Écart de 4°C aujourd'hui — comparable à la moyenne décennale de 5°C"
+    "en": "The weather is pleasant in both. 5°C gap today — about the same as the decade average of 5°C",
+    "fr": "Il fait bon dans les deux villes. Écart de 5°C aujourd'hui — comparable à la moyenne décennale de 5°C"
   }
 }
