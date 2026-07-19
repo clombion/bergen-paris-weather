@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-19T15:00:29Z",
+  "updated": "2026-07-19T17:02:13Z",
   "items": {
     "Bergen": {
-      "value": "22°C",
-      "icon": "🌤️"
+      "value": "20°C",
+      "icon": "☀️"
     },
     "Paris": {
       "value": "24°C",
@@ -11,7 +11,7 @@
     }
   },
   "summary": {
-    "en": "The weather is pleasant in both. 3°C gap today — smaller than the decade average of 5°C",
-    "fr": "Il fait bon dans les deux villes. Écart de 3°C aujourd'hui — plus faible que la moyenne décennale de 5°C"
+    "en": "The weather is pleasant in both. 4°C gap today — about the same as the decade average of 5°C",
+    "fr": "Il fait bon dans les deux villes. Écart de 4°C aujourd'hui — comparable à la moyenne décennale de 5°C"
   }
 }
