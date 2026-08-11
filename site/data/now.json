@@ -1,12 +1,12 @@
 {
-  "updated": "2026-08-11T22:48:58Z",
+  "updated": "2026-08-11T23:46:51Z",
   "items": {
     "Bergen": {
-      "value": "9°C",
+      "value": "8°C",
       "icon": "🌙"
     },
     "Paris": {
-      "value": "25°C",
+      "value": "24°C",
       "icon": "🌙"
     }
   },
