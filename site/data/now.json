@@ -1,17 +1,17 @@
 {
-  "updated": "2026-10-27T07:32:57Z",
+  "updated": "2026-10-27T14:12:44Z",
   "items": {
     "Bergen": {
       "value": "13°C",
-      "icon": "🌦️"
+      "icon": "☁️"
     },
     "Paris": {
-      "value": "14°C",
+      "value": "16°C",
       "icon": "☁️"
     }
   },
   "summary": {
-    "en": "The weather is cold in both. 1°C gap today — smaller than the decade average of 5°C",
-    "fr": "Il fait froid dans les deux villes. Écart de 1°C aujourd'hui — plus faible que la moyenne décennale de 5°C"
+    "en": "The weather is cold in both. 3°C gap today — smaller than the decade average of 5°C",
+    "fr": "Il fait froid dans les deux villes. Écart de 3°C aujourd'hui — plus faible que la moyenne décennale de 5°C"
   }
 }
